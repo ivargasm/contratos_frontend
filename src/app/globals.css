@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-title: var(--title);
+  --color-title-foreground: var(--title-foreground);
+  --color-subtitle: var(--subtitle);
+  --color-body: var(--body);
+  --color-body-foreground: var(--body-foreground);
+  --color-secondary: var(--secondary);
+  --color-disabled: var(--disabled);
+  --color-link: var(--link);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  --background: rgb(248, 248, 245);         /* Gris muy claro */
+  --foreground: rgb(33, 37, 41);            /* Gris oscuro */
+
+  --card: rgb(255, 255, 255);               /* Blanco */
+  --card-foreground: rgb(33, 37, 41);
+
+  --popover: rgb(255, 255, 255);
+  --popover-foreground: rgb(33, 37, 41);
+
+  --primary: rgb(17, 48, 105);               /* Azul marino */
+  --primary-foreground: rgb(215, 208, 208); /* Blanco */
+
+  --secondary-foreground: rgb(33, 37, 41);
+
+  --muted: rgb(233, 236, 239);
+  --muted-foreground: rgb(108, 117, 125);
+
+  --accent: rgb(195, 172, 115);             /* Dorado suave */
+  --accent-foreground: rgb(33, 37, 41);
+
+  --destructive: rgb(192, 57, 43);          /* Rojo legal */
+  --border: rgb(164, 168, 171);
+  --input: rgb(222, 226, 230);
+  --ring: rgb(108, 117, 125);
+
+  --title: rgb(44, 62, 80);
+  --title-foreground: rgb(160, 180, 200);
+  --subtitle: rgb(123, 63, 0);
+  --body: rgb(51, 51, 51);
+  --body-foreground: rgb(220, 220, 220);
+  --secondary: rgb(112, 128, 144);
+  --disabled: rgb(176, 196, 222);
+  --link: rgb(72, 61, 139);
+}
+
+
+.dark {
+  --background: rgb(20, 20, 20);
+  --foreground: rgb(245, 245, 245);
+
+  --card: rgb(30, 30, 30);
+  --card-foreground: rgb(245, 245, 245);
+
+  --popover: rgb(30, 30, 30);
+  --popover-foreground: rgb(245, 245, 245);
+
+  --primary: rgb(75, 103, 181);              /* Azul profundo */
+  --primary-foreground: rgb(41, 39, 39);
+
+  --secondary-foreground: rgb(245, 245, 245);
+
+  --muted: rgb(70, 70, 70);
+  --muted-foreground: rgb(170, 170, 170);
+
+  --accent: rgb(173, 147, 84);              /* Dorado opaco */
+  --accent-foreground: rgb(245, 245, 245);
+
+  --destructive: rgb(231, 76, 60);
+  --border: rgb(99, 97, 97);
+  --input: rgb(70, 70, 70);
+  --ring: rgb(108, 117, 125);
+
+  --title: rgb(208, 216, 232);
+  --title-foreground: rgb(54, 70, 87);
+  --subtitle: rgb(223, 190, 143);
+  --body: rgb(220, 220, 220);
+  --body-foreground: rgb(206, 206, 206);
+  --secondary: rgb(160, 180, 200);
+  --disabled: rgb(120, 130, 140);
+  --link: rgb(180, 160, 255);
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
