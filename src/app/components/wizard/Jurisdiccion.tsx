@@ -54,7 +54,7 @@ export const Jurisdiccion: React.FC<Paso1Props> = ({ onNext, onBack, defaultData
                 <Button variant="outline" onClick={onBack}>
                     Atrás
                 </Button>
-                <Button onClick={handleNext} className="w-full sm:w-auto">
+                <Button onClick={handleNext} className="sm:w-auto">
                     Siguiente
                 </Button>
             </div>

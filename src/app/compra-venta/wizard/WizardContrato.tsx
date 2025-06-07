@@ -32,7 +32,7 @@ export const WizardContrato = () => {
     const handleBack = () => setStep((prev) => prev - 1)
 
     return (
-        <div className="w-[50%] flex items-center justify-center py-12 px-4">
+        <div className="w-[100%] md:w-[50%] flex items-center justify-center py-12 px-4">
             {step === 1 && (
                 <InfoGeneral onNext={handleNext} defaultData={formData as unknown as DataInfoGeneral} />
             )}
