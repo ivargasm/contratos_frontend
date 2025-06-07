@@ -8,7 +8,7 @@ import ProtectedRoute from "../components/ProtectedRoutes";
 interface Contract {
   id: number;
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   file_path: string;
   created_at: string;
 }
@@ -58,7 +58,7 @@ export default function ProfilePage() {
     e.preventDefault();
     try {
       setMessage({ text: 'Perfil actualizado correctamente', type: 'success' });
-    } catch (error) {
+    } catch {
       setMessage({ text: 'Error al actualizar el perfil', type: 'error' });
     }
   };
@@ -72,7 +72,7 @@ export default function ProfilePage() {
     try {
       setMessage({ text: 'Contraseña actualizada correctamente', type: 'success' });
       setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-    } catch (error) {
+    } catch {
       setMessage({ text: 'Error al cambiar la contraseña', type: 'error' });
     }
   };

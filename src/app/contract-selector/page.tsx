@@ -11,7 +11,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useContratoStore } from "../store/useContratoStore"
-import { type } from "os"
 
 
 

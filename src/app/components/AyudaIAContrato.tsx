@@ -29,8 +29,12 @@ export default function AyudaIAContrato() {
             console.log(result)
             setFormData(result.data)
             router.push(`/${tipoContrato}/wizard`)
-        } catch (error: any) {
-            console.log(error.message)
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message)
+            } else {
+                console.log("An unknown error occurred")
+            }
         } finally {
             setLoading(false)
         }
