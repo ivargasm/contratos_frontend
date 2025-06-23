@@ -57,7 +57,7 @@ export const InfoGeneral: React.FC<InfoGeneralProps> = ({ onNext, defaultData })
             </div>
 
             <div className="pt-4">
-                <Button onClick={handleNext} className="w-full sm:w-auto">
+                <Button onClick={handleNext} className="w-full sm:w-auto cursor-pointer">
                     Siguiente
                 </Button>
             </div>

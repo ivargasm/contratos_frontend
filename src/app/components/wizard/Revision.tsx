@@ -73,10 +73,10 @@ export const Revision: React.FC<RevisionProps> = ({ onBack }) => {
             </div>
 
             <div className="flex justify-between pt-6">
-                <Button variant="outline" onClick={onBack}>
+                <Button variant="outline" onClick={onBack} className="cursor-pointer">
                     Atrás
                 </Button>
-                <Button onClick={handlePreview} disabled={loading}>
+                <Button onClick={handlePreview} disabled={loading} className="cursor-pointer">
                     {loading ? "Cargando vista previa..." : "Vista previa"}
                 </Button>
             </div>

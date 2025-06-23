@@ -132,3 +132,39 @@ export async function getContracts(url: string) {
 
     return await res.json(); // { contracts: [...contratos] }
 }
+
+// Generar enlace de pago
+export const createPaymentLink = async (url: string) => {
+    const res = await fetch(`${url}/payments/create-payment-link`, {
+        method: "POST",
+        credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("No se pudo generar el enlace de pago");
+
+    const data = await res.json();
+    return data.url;
+};
+
+export const getAvailableContracts = async (url: string) => {
+    const res = await fetch(`${url}/contracts/available-count`, {
+        credentials: "include",
+    });
+    if (!res.ok) throw new Error("No se pudo obtener el contador de contratos");
+    const data = await res.json();
+    return data.remaining;
+};
+
+export const getPresignedUrl = async (url: string, contract_id: number) => {
+    try {
+        const res = await fetch(`${url}/contracts/download-url/${contract_id}`, {
+            credentials: "include",
+        });
+        const data = await res.json();
+        if (data?.url) {
+            return data.url;
+        }
+    } catch (err) {
+        alert("Error al generar el link de descarga: " + err);
+    }
+};

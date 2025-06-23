@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from "../store/Store";
-import { getContracts } from "../lib/api";
+import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl } from "../lib/api";
 import ProtectedRoute from "../components/ProtectedRoutes";
 
 interface Contract {
@@ -26,18 +26,21 @@ export default function ProfilePage() {
     confirmPassword: ''
   });
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [availableContracts, setAvailableContracts] = useState<number | null>(null);
+
 
   // Simular carga de contratos
   useEffect(() => {
     const fetchContracts = async () => {
       try {
         const data = await getContracts(useAuthStore.getState().url);
-        // console.log('Contratos recibidos:', data);
-        // Asegurarnos de que data sea un array
         const contractsData = Array.isArray(data) ? data : [];
         setContracts(contractsData);
+
+        const available = await getAvailableContracts(useAuthStore.getState().url);
+        setAvailableContracts(available);
       } catch (error) {
-        console.error('Error fetching contracts:', error);
+        console.error('Error al obtener contratos o contador:', error);
       } finally {
         setLoading(false);
       }
@@ -45,6 +48,7 @@ export default function ProfilePage() {
 
     fetchContracts();
   }, []);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -77,6 +81,17 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDownloadContract = async (contractId: number) => {
+    try {
+      const url = await getPresignedUrl(useAuthStore.getState().url, contractId);
+      if (url) {
+        window.open(url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error al descargar el contrato:', error);
+    }
+  };
+
   // Función para formatear la fecha (ya no es necesaria, pero la dejamos por si acaso)
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -98,17 +113,16 @@ export default function ProfilePage() {
                 <h1 className="text-2xl font-bold">Mi Perfil</h1>
                 <p className="mt-1 text-white/90">Administra tu cuenta y configuración</p>
               </header>
-              
+
               <nav className="border-b border-border">
                 <ul className="flex -mb-px">
                   <li>
                     <button
                       onClick={() => setActiveTab('profile')}
-                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === 'profile' 
-                          ? 'border-primary text-primary' 
-                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
-                      }`}
+                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'profile'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+                        }`}
                       aria-current={activeTab === 'profile' ? 'page' : undefined}
                     >
                       Perfil
@@ -117,11 +131,10 @@ export default function ProfilePage() {
                   <li>
                     <button
                       onClick={() => setActiveTab('contracts')}
-                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === 'contracts' 
-                          ? 'border-primary text-primary' 
-                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
-                      }`}
+                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'contracts'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+                        }`}
                       aria-current={activeTab === 'contracts' ? 'page' : undefined}
                     >
                       Mis Contratos
@@ -130,11 +143,10 @@ export default function ProfilePage() {
                   <li>
                     <button
                       onClick={() => setActiveTab('settings')}
-                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors ${
-                        activeTab === 'settings' 
-                          ? 'border-primary text-primary' 
-                          : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
-                      }`}
+                      className={`py-4 px-6 text-center border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'settings'
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
+                        }`}
                       aria-current={activeTab === 'settings' ? 'page' : undefined}
                     >
                       Configuración
@@ -145,9 +157,8 @@ export default function ProfilePage() {
 
               <div className="p-6">
                 {message.text && (
-                  <div className={`mb-4 p-4 rounded ${
-                    message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
+                  <div className={`mb-4 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
                     {message.text}
                   </div>
                 )}
@@ -164,17 +175,25 @@ export default function ProfilePage() {
                         <p className="text-sm text-gray-500">Rol: {user?.role}</p>
                       </div>
                     </div>
-                                        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
-                        <div className="bg-primary/5 p-4 rounded-lg border border-border">
-                          <h3 className="text-sm font-medium text-foreground">Total de Contratos</h3>
-                          <p className="mt-1 text-3xl font-semibold text-primary">{contracts.length}</p>
-                        </div>
-                        <div className="bg-accent/5 p-4 rounded-lg border border-border">
-                          <h3 className="text-sm font-medium text-foreground">Último contrato</h3>
-                          <p className="mt-1 text-lg font-semibold text-accent">
-                            {contracts.length > 0 ? formatDate(contracts[0].created_at) : 'N/A'}
-                          </p>
-                        </div>
+                    <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
+                      <div className="bg-primary/5 p-4 rounded-lg border border-border">
+                        <h3 className="text-sm font-medium text-foreground">Total de Contratos</h3>
+                        <p className="mt-1 text-3xl font-semibold text-primary">{contracts.length}</p>
+                      </div>
+                      <div className="bg-accent/5 p-4 rounded-lg border border-border">
+                        <h3 className="text-sm font-medium text-foreground">Último contrato</h3>
+                        <p className="mt-1 text-lg font-semibold text-accent">
+                          {contracts.length > 0 ? formatDate(contracts[0].created_at) : 'N/A'}
+                        </p>
+                      </div>
+                      <div className="bg-yellow-100 dark:bg-yellow-900/10 p-4 rounded-lg border border-border">
+                        <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                          Contratos disponibles
+                        </h3>
+                        <p className="mt-1 text-2xl font-semibold text-yellow-600 dark:text-yellow-400">
+                          {availableContracts !== null ? availableContracts : '...'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -182,6 +201,20 @@ export default function ProfilePage() {
                 {activeTab === 'contracts' && (
                   <section>
                     <h2 className="text-xl font-semibold mb-4">Mis Contratos</h2>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const url = await createPaymentLink(useAuthStore.getState().url);
+                          window.location.href = url; // redirigir a Stripe
+                        } catch (error) {
+                          alert("Error al generar el enlace de pago");
+                          console.error(error);
+                        }
+                      }}
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors mb-4 cursor-pointer"
+                    >
+                      Comprar contrato adicional
+                    </button>
                     {loading ? (
                       <div className="flex justify-center items-center h-40">
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -245,7 +278,7 @@ export default function ProfilePage() {
                                   })}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <button 
+                                  <button
                                     onClick={() => window.open(`${useAuthStore.getState().url}/contracts/preview/${contract.id}`, '_blank')}
                                     className="text-primary hover:underline"
                                   >
@@ -253,14 +286,12 @@ export default function ProfilePage() {
                                   </button>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  <a 
-                                    href={`${contract.file_path}`}
-                                    download
-                                    target="_blank"
-                                    className="text-primary hover:text-primary/80"
+                                  <button
+                                    onClick={() => handleDownloadContract(contract.id)}
+                                    className="text-primary hover:text-primary/80 cursor-pointer"
                                   >
                                     Descargar
-                                  </a>
+                                  </button>
                                 </td>
                               </tr>
                             ))}
@@ -274,7 +305,7 @@ export default function ProfilePage() {
                 {activeTab === 'settings' && (
                   <section>
                     <h2 className="text-xl font-semibold mb-6">Configuración de la Cuenta</h2>
-                    
+
                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                       <section className="bg-card shadow px-4 py-5 sm:rounded-lg sm:p-6 border border-border">
                         <div className="md:grid md:grid-cols-3 md:gap-6">

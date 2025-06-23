@@ -52,10 +52,10 @@ export const Testigos: React.FC<TestigosProps> = ({ onNext, onBack, defaultData 
             </div>
 
             <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={onBack}>
+                <Button variant="outline" onClick={onBack} className="cursor-pointer">
                     Atrás
                 </Button>
-                <Button onClick={handleSubmit}>
+                <Button onClick={handleSubmit} className="cursor-pointer">
                     Siguiente
                 </Button>
             </div>

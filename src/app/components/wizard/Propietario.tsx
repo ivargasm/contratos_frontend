@@ -45,10 +45,10 @@ export const Propietario: React.FC<PropietarioProps> = ({ onNext, onBack, defaul
             <GroupIdentidad prefix="propietario" form={Object.fromEntries(Object.entries(form))} onChange={handleChange} />
 
             <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={onBack}>
+                <Button variant="outline" onClick={onBack} className="cursor-pointer">
                     Atrás
                 </Button>
-                <Button onClick={handleSubmit}>
+                <Button onClick={handleSubmit} className="cursor-pointer">
                     Siguiente
                 </Button>
             </div>

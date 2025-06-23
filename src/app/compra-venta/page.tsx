@@ -25,12 +25,12 @@ export default function CompraVentaIntroPage() {
 
                     <div className="flex flex-col sm:flex-row gap-4">
                         <Link href="/compra-venta/wizard">
-                            <Button size="lg" className="w-full sm:w-auto">
+                            <Button size="lg" className="w-full sm:w-auto cursor-pointer">
                                 <PencilLine className="mr-2 h-4 w-4" /> Llenar Formulario
                             </Button>
                         </Link>
                         <Link href="/compra-venta/ia">
-                            <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto cursor-pointer">
                                 <Lightbulb className="mr-2 h-4 w-4" /> Usar IA para Generarlo
                             </Button>
                         </Link>

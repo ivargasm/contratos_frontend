@@ -58,12 +58,12 @@ export default function ArrendamientoIntroPage() {
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <Link href="/arrendamiento/wizard" className="w-full sm:w-auto">
-                            <Button size="lg" className="w-full">
+                            <Button size="lg" className="w-full cursor-pointer">
                                 <PencilLine className="mr-2 h-4 w-4" /> Llenar Paso a Paso
                             </Button>
                         </Link>
                         <Link href="/arrendamiento/ia" className="w-full sm:w-auto">
-                            <Button variant="outline" size="lg" className="w-full">
+                            <Button variant="outline" size="lg" className="w-full cursor-pointer">
                                 <Lightbulb className="mr-2 h-4 w-4" /> Generar con IA
                             </Button>
                         </Link>

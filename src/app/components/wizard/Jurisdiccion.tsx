@@ -51,10 +51,10 @@ export const Jurisdiccion: React.FC<Paso1Props> = ({ onNext, onBack, defaultData
             </div>
 
             <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={onBack}>
+                <Button variant="outline" onClick={onBack} className="cursor-pointer">
                     Atrás
                 </Button>
-                <Button onClick={handleNext} className="sm:w-auto">
+                <Button onClick={handleNext} className="cursor-pointer sm:w-auto">
                     Siguiente
                 </Button>
             </div>
