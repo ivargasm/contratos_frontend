@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PreviewModal } from "@/app/components/PreviewModal"
 import { useContratoStore } from "@/app/store/useContratoStore" 
-import { generatePurchaseSaleContract, previewContract } from "@/app/lib/api"
+import { generatePurchaseSaleContract, getPresignedUrl, previewContract } from "@/app/lib/api"
 import { useAuthStore } from "@/app/store/Store" 
 import { useRouter } from "next/navigation"
 
@@ -43,7 +43,11 @@ export const Revision: React.FC<RevisionProps> = ({ onBack }) => {
         try {
             const result = await generatePurchaseSaleContract(url, tipoContrato || "purchase_sale", formData)
             //abrir en una nueva pestaña
-            window.open(result.download_url, '_blank')
+            // window.open(result.download_url, '_blank')
+            const url_presigned = await getPresignedUrl(url, result.id);
+            if (url_presigned) {
+                window.open(url_presigned, '_blank');
+            }
             // redirigir a dashboard
             router.push('/profile')
         } catch (error: unknown) {
