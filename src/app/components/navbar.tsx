@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { Menu, X, Home, Folder, LogOut, LogIn, Sun, Moon, File } from "lucide-react";
 import Link from "next/link";
-import {useAuthStore} from "../store/Store";
+import { useAuthStore } from "../store/Store";
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { userAuth, logout } = useAuthStore();
-
+    const router = useRouter();
     const [darkMode, setDarkMode] = useState(false)
 
     const toggleDarkMode = () => {
@@ -21,6 +22,19 @@ export default function Navbar() {
             document.documentElement.classList.add("dark")
         }
     }
+
+    const handleLogout = async () => {
+        try {
+            // Llama a la función del store (que ya no tiene el redirect)
+            await logout();
+
+            // Redirige al login DESPUÉS de que el logout se completó
+            router.push('/auth/login');
+
+        } catch (error) {
+            console.error("Fallo el proceso de logout:", error);
+        }
+    };
 
     return (
         <nav className="fixed top-0 left-0 w-full bg-white text-primary dark:bg-foreground dark:text-primary shadow-md z-50">
@@ -58,9 +72,9 @@ export default function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link onClick={() => { logout(); } } className="flex items-center gap-2 hover:text-primary" href={"/"}>
+                                <button onClick={handleLogout} className="flex items-center gap-2 hover:text-primary">
                                     <LogOut size={20} /> Logout
-                                </Link>
+                                </button>
                             </li>
                         </>
                     )}
@@ -103,9 +117,9 @@ export default function Navbar() {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link onClick={() => { logout(); }} className="flex items-center gap-2 text-slate-700 hover:text-blue-600" href={"/"}>
+                                    <button onClick={handleLogout} className="flex items-center gap-2 text-slate-700 hover:text-blue-600">
                                         <LogOut size={20} /> Logout
-                                    </Link>
+                                    </button>
                                 </li>
                             </>
                         )}

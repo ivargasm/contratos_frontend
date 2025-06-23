@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { login, fetchUser, logout, register } from "../lib/api";
-import router from 'next/router';
 
 interface AuthState {
     user: { id: string; username: string; email: string; role: string } | null;
@@ -47,7 +46,6 @@ export const useAuthStore = create<AuthState>((set) => ({
                 return;
             }
             set({ user: null, userAuth: false});
-            router.push("/login");
         } catch (error) {
             console.error("Error al cerrar sesión", error);
         }
