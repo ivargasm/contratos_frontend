@@ -44,7 +44,7 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
 
     const camposRequeridos = ["descripcion_bien",
         ...(tipoContrato === "compra-venta" ? ["valor_operacion"] : []),
-        ...(tipoContrato === "arrendamiento" || tipoContrato === "comodato" ? ["uso_destinado"] : [])
+        ...(tipoContrato === "arrendamiento" || tipoContrato === "comodato" ? ["uso_destinado", "direccion"] : [])
     ]
 
     // Actualizar valor_en_letras cuando cambia valor_operacion o moneda
@@ -101,6 +101,8 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
                         placeholder="Calle, número, colonia, municipio, estado."
                         value={form.direccion || ""}
                         onChange={handleChange}
+                        required
+                        error={errores.includes("direccion")}
                     />
                 )}
                 <InputField
@@ -156,6 +158,8 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
                         placeholder="Residencial, Comercial, Industrial, etc."
                         value={form.uso_destinado || ""}
                         onChange={handleChange}
+                        required
+                        error={errores.includes("uso_destinado")}
                     />
                 )}
             </div>
