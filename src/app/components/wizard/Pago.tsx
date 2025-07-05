@@ -7,8 +7,10 @@ import { useEffect, useState } from "react"
 import { SelectField } from "../forms/SelectField"
 import { useContratoStore } from "@/app/store/useContratoStore"
 import { formatearValorEnLetras } from "@/app/lib/numberToWords"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DataPago {
+    [key: string]: string | undefined
     forma_pago: string
     fechas_pago: string
     lugar_pago: string
@@ -35,6 +37,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
         valor_en_letras: defaultData?.valor_en_letras || "",
         deposito_garantia: defaultData?.deposito_garantia || "",
     })
+    const [errores, setErrores] = useState<string[]>([])
+    const camposRequeridos = ["forma_pago", "fechas_pago", "lugar_pago", ...(tipoContrato === "arrendamiento" ? ["valor_operacion"] : [])]
     // Actualizar valor_en_letras cuando cambia valor_operacion o moneda
     useEffect(() => {
         if (form.valor_operacion && form.moneda) {
@@ -48,6 +52,12 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
     }
 
     const handleSubmit = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
 
@@ -62,6 +72,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                     placeholder="Efectivo, Transferencia, etc."
                     value={form.forma_pago}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("forma_pago")}
                 />
                 <InputField
                     label="Fechas de pago"
@@ -69,6 +81,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                     placeholder="Los dias 5 de cada mes"
                     value={form.fechas_pago}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("fechas_pago")}
                 />
                 <InputField
                     label="Lugar de pago"
@@ -76,6 +90,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                     placeholder="Domicilio, Numero de cuenta bancaria, etc."
                     value={form.lugar_pago}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("lugar_pago")}
                 />
                 {tipoContrato === "arrendamiento" && (
                     <>
@@ -101,6 +117,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                             value={form.valor_operacion}
                             onChange={handleChange}
                             type="number"
+                            required
+                            error={errores.includes("valor_operacion")}
                         />
                         <InputField
                             label="Valor en letra"

@@ -3,8 +3,10 @@
 import { useState } from "react"
 import { InputField } from "../forms/InputField"
 import { Button } from "@/components/ui/button"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DataJurisdiccion {
+    [key: string]: string | undefined
     pais_jurisdiccion: string
     ciudad_jurisdiccion: string
 }
@@ -20,12 +22,20 @@ export const Jurisdiccion: React.FC<Paso1Props> = ({ onNext, onBack, defaultData
         pais_jurisdiccion: defaultData?.pais_jurisdiccion || "",
         ciudad_jurisdiccion: defaultData?.ciudad_jurisdiccion || "",
     })
+    const [errores, setErrores] = useState<string[]>([])
+    const camposRequeridos = ["pais_jurisdiccion", "ciudad_jurisdiccion"]
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleNext = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
 
@@ -40,6 +50,8 @@ export const Jurisdiccion: React.FC<Paso1Props> = ({ onNext, onBack, defaultData
                     placeholder="México"
                     value={form.pais_jurisdiccion}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("pais_jurisdiccion")}
                 />
                 <InputField
                     label="Ciudad"
@@ -47,6 +59,8 @@ export const Jurisdiccion: React.FC<Paso1Props> = ({ onNext, onBack, defaultData
                     placeholder="Queretaro"
                     value={form.ciudad_jurisdiccion}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("ciudad_jurisdiccion")}
                 />
             </div>
 

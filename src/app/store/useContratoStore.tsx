@@ -10,6 +10,10 @@ interface ContratoState {
     setFormData: (data: Record<string, string>) => void
     updateFormData: (key: string, value: string) => void
     clearFormData: () => void
+
+    contractId: number | null
+    setContractId: (id: number | null) => void
+    clearContractId: () => void
 }
 
 export const useContratoStore = create<ContratoState>((set) => ({
@@ -28,4 +32,9 @@ export const useContratoStore = create<ContratoState>((set) => ({
         set((state) => ({ formData: { ...state.formData, [key]: value } })),
 
     clearFormData: () => set({ formData: {} }),
+
+    // ID del contrato a editar
+    contractId: null,
+    setContractId: (id) => set({ contractId: id }),
+    clearContractId: () => set({ contractId: null })
 }))

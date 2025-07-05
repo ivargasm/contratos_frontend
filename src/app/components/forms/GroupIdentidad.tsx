@@ -6,9 +6,10 @@ interface GroupIdentidadProps {
     prefix: string
     form: Record<string, string>
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    errores?: string[]
 }
 
-export const GroupIdentidad = ({ prefix, form, onChange }: GroupIdentidadProps) => (
+export const GroupIdentidad = ({ prefix, form, onChange, errores = [] }: GroupIdentidadProps) => (
     <div className="grid gap-4">
         <InputField
             label="Nombre completo"
@@ -16,6 +17,8 @@ export const GroupIdentidad = ({ prefix, form, onChange }: GroupIdentidadProps) 
             placeholder="Juan Pérez"
             value={form[`${prefix}_nombre`] || ""}
             onChange={onChange}
+            required
+            error={errores.includes(`${prefix}_nombre`)}
         />
         <SelectField
             label="Nacionalidad"
@@ -51,6 +54,8 @@ export const GroupIdentidad = ({ prefix, form, onChange }: GroupIdentidadProps) 
             placeholder="Calle 123"
             value={form[`${prefix}_direccion`] || ""}
             onChange={onChange}
+            required
+            error={errores.includes(`${prefix}_direccion`)}
         />
     </div>
 )

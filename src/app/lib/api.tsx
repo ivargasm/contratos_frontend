@@ -168,3 +168,40 @@ export const getPresignedUrl = async (url: string, contract_id: number) => {
         alert("Error al generar el link de descarga: " + err);
     }
 };
+
+export async function getEditableContract(url: string, contractId: number) {
+    const response = await fetch(`${url}/contracts/editable/${contractId}`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Error al obtener el contrato editable");
+    }
+
+    return await response.json(); // { type, data }
+}
+
+export async function updateContract(
+    url: string,
+    contractId: number,
+    type: string,
+    data: Record<string, string>
+) {
+    const response = await fetch(`${url}/contracts/contract-update/${contractId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ type, data }),
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Error al actualizar el contrato");
+    }
+
+    return await response.json(); // { id, message, download_url }
+}

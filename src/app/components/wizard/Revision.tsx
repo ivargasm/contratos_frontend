@@ -4,17 +4,18 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PreviewModal } from "@/app/components/PreviewModal"
-import { useContratoStore } from "@/app/store/useContratoStore" 
+import { useContratoStore } from "@/app/store/useContratoStore"
 import { generatePurchaseSaleContract, getPresignedUrl, previewContract } from "@/app/lib/api"
-import { useAuthStore } from "@/app/store/Store" 
+import { useAuthStore } from "@/app/store/Store"
 import { useRouter } from "next/navigation"
+import { updateContract } from "@/app/lib/api"
 
 interface RevisionProps {
     onBack: () => void
 }
 
 export const Revision: React.FC<RevisionProps> = ({ onBack }) => {
-    const { formData, tipoContrato } = useContratoStore()
+    const { formData, tipoContrato, contractId, clearFormData, clearContractId } = useContratoStore()
     const { url } = useAuthStore()
     const router = useRouter()
 
@@ -41,15 +42,26 @@ export const Revision: React.FC<RevisionProps> = ({ onBack }) => {
 
     const handleConfirmDownload = async () => {
         try {
-            const result = await generatePurchaseSaleContract(url, tipoContrato || "purchase_sale", formData)
-            //abrir en una nueva pestaña
-            // window.open(result.download_url, '_blank')
-            const url_presigned = await getPresignedUrl(url, result.id);
-            if (url_presigned) {
-                window.open(url_presigned, '_blank');
+            let result;
+            if (contractId) {
+                // Edición
+                result = await updateContract(url, contractId, tipoContrato || "", formData)
+            } else {
+                // Creación
+                result = await generatePurchaseSaleContract(url, tipoContrato || "purchase_sale", formData)
             }
-            // redirigir a dashboard
+
+            const url_presigned = await getPresignedUrl(url, result.id)
+            if (url_presigned) {
+                window.open(url_presigned, '_blank')
+            }
+
+            // Limpieza
+            clearFormData()
+            clearContractId()
+
             router.push('/profile')
+
         } catch (error: unknown) {
             if (error instanceof Error) {
                 alert(error.message)

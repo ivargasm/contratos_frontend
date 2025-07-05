@@ -4,8 +4,10 @@
 import { InputField } from "../forms/InputField"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DatosEntregaBien {
+    [key: string]: string | undefined;
     direccion_entrega: string
     fecha_entrega: string
     acta_entrega: string
@@ -24,11 +26,22 @@ export const EntregaBien: React.FC<EntregaBienProps> = ({ onNext, onBack, defaul
         acta_entrega: defaultData?.acta_entrega || "",
     })
 
+    const [errores, setErrores] = useState<string[]>([])
+
+    const camposRequeridos = ["fecha_entrega", "direccion_entrega"]
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
 
@@ -43,6 +56,8 @@ export const EntregaBien: React.FC<EntregaBienProps> = ({ onNext, onBack, defaul
                     placeholder="Calle 123"
                     value={form.direccion_entrega}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("direccion_entrega")}
                 />
                 <InputField
                     label="Fecha de entrega"
@@ -51,6 +66,8 @@ export const EntregaBien: React.FC<EntregaBienProps> = ({ onNext, onBack, defaul
                     value={form.fecha_entrega}
                     onChange={handleChange}
                     type="date"
+                    required
+                    error={errores.includes("fecha_entrega")}
                 />
                 <InputField
                     label="Acta de entrega"

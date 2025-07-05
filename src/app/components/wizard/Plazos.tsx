@@ -5,8 +5,10 @@ import { InputField } from "../forms/InputField"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { SelectField } from "../forms/SelectField"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DatosPlazos {
+    [key: string]: string | undefined
     duracion: string
     fecha_inicio: string
     fecha_fin: string
@@ -30,12 +32,21 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
         condiciones_renovacion: defaultData?.condiciones_renovacion || "",
         preaviso_terminacion: defaultData?.preaviso_terminacion || "",
     })
+    const [errores, setErrores] = useState<string[]>([])
+    const camposRequeridos = ["duracion", "fecha_inicio", "fecha_fin"]
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
 
@@ -50,6 +61,8 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
                     placeholder="12 meses"
                     value={form.duracion}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("duracion")}
                 />
                 <InputField
                     label="Fecha de inicio"
@@ -58,6 +71,8 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
                     value={form.fecha_inicio}
                     onChange={handleChange}
                     type="date"
+                    required
+                    error={errores.includes("fecha_inicio")}
                 />
                 <InputField
                     label="Fecha de fin"
@@ -66,6 +81,8 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
                     value={form.fecha_fin}
                     onChange={handleChange}
                     type="date"
+                    required
+                    error={errores.includes("fecha_fin")}
                 />
                 <SelectField
                     label="Renovación automática"

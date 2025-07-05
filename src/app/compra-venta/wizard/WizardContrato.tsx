@@ -25,7 +25,11 @@ export const WizardContrato = () => {
     const { formData, setFormData } = useContratoStore()
 
     const handleNext = (data: Partial<FormData>) => {
-        setFormData({ ...formData, ...data })
+        // Ensure all values are strings (no undefined)
+        const sanitizedData = Object.fromEntries(
+            Object.entries({ ...formData, ...data }).map(([key, value]) => [key, value === undefined ? "" : value])
+        ) as Record<string, string>;
+        setFormData(sanitizedData)
         setStep((prev) => prev + 1)
     }
 
@@ -34,43 +38,46 @@ export const WizardContrato = () => {
     return (
         <div className="w-[100%] md:w-[50%] flex items-center justify-center py-12 px-4">
             {step === 1 && (
-                <InfoGeneral onNext={handleNext} defaultData={formData as unknown as DataInfoGeneral} />
+                <InfoGeneral
+                    onNext={(data: DataInfoGeneral) => handleNext(data as Partial<FormData>)}
+                    defaultData={formData as unknown as DataInfoGeneral}
+                />
             )}
             {step === 2 && (
-                <Propietario onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataPropietario} />
+                <Propietario onNext={(data: DataPropietario) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataPropietario} />
             )}
             {step === 3 && (
-                <Interesado onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataInteresado} />
+                <Interesado onNext={(data: DataInteresado) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataInteresado} />
             )}
             {step === 4 && (
-                <Bien onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DatosBien} />
+                <Bien onNext={(data: DatosBien) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DatosBien} />
             )}
             {step === 5 && (
-                <Pago onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataPago} />
+                <Pago onNext={(data: DataPago) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataPago} />
             )}
             {step === 6 && (
-                <EntregaBien onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DatosEntregaBien} />
+                <EntregaBien onNext={(data: DatosEntregaBien) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DatosEntregaBien} />
             )}
             {step === 7 && (
-                <GarantiasAdicionales onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataGarantiasAdicionales} />
+                <GarantiasAdicionales onNext={(data: DataGarantiasAdicionales) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataGarantiasAdicionales} />
             )}
             {step === 8 && (
-                <ObligacionesPropietario onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DatosObligacionesPropietario} />
+                <ObligacionesPropietario onNext={(data: DatosObligacionesPropietario) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DatosObligacionesPropietario} />
             )}
             {step === 9 && (
-                <ObligacionesInteresado onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DatosObligacionesInteresado} />
+                <ObligacionesInteresado onNext={(data: DatosObligacionesInteresado) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DatosObligacionesInteresado} />
             )}
             {step === 10 && (
-                <IncumplimientoContrato onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataIncumplimientoContrato} />
+                <IncumplimientoContrato onNext={(data: DataIncumplimientoContrato) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataIncumplimientoContrato} />
             )}
             {step === 11 && (
-                <Jurisdiccion onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataJurisdiccion} />
+                <Jurisdiccion onNext={(data: DataJurisdiccion) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataJurisdiccion} />
             )}
             {step === 12 && (
-                <ClausulasAdicionales onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as DataClausulasAdicionales} />
+                <ClausulasAdicionales onNext={(data: DataClausulasAdicionales) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as DataClausulasAdicionales} />
             )}
             {step === 13 && (
-                <Testigos onNext={handleNext} onBack={handleBack} defaultData={formData as unknown as TestigosData} />
+                <Testigos onNext={(data: TestigosData) => handleNext(data as Partial<FormData>)} onBack={handleBack} defaultData={formData as unknown as TestigosData} />
             )}
             {step === 14 && (
                 <Revision onBack={handleBack} />

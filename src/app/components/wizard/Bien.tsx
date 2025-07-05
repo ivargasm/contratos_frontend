@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { formatearValorEnLetras } from "@/app/lib/numberToWords"
 import { useContratoStore } from "@/app/store/useContratoStore"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DatosBien {
+    [key: string]: string | undefined;
     tipo_bien: string
     descripcion_bien: string
     direccion?: string
@@ -38,6 +40,12 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
         uso_destinado: defaultData?.uso_destinado || "",
         accesorios: defaultData?.accesorios || "",
     })
+    const [errores, setErrores] = useState<string[]>([])
+
+    const camposRequeridos = ["descripcion_bien",
+        ...(tipoContrato === "compra-venta" ? ["valor_operacion"] : []),
+        ...(tipoContrato === "arrendamiento" || tipoContrato === "comodato" ? ["uso_destinado"] : [])
+    ]
 
     // Actualizar valor_en_letras cuando cambia valor_operacion o moneda
     useEffect(() => {
@@ -53,10 +61,15 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
     }
 
     const handleSubmit = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
-
-    console.log(tipoContrato)
 
     return (
         <div className="space-y-6 w-full mx-auto p-6 bg-card rounded-xl shadow-md">
@@ -73,11 +86,13 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
                     />
                 )}
                 <InputField
-                    label="Descripción de la propiedad"
+                    label="Descripción de la propiedad *"
                     name="descripcion_bien"
                     placeholder="Casa, departamento, terreno, automóvil, etc."
                     value={form.descripcion_bien}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("descripcion_bien")}
                 />
                 {(tipoContrato === "arrendamiento" || tipoContrato === "comodato") && form.tipo_bien === "Inmueble" && (
                     <InputField
@@ -102,7 +117,7 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
                             name="moneda"
                             value={form.moneda}
                             onChange={(e) => handleChange(e as unknown as React.ChangeEvent<HTMLInputElement>)} // TypeScript workaround
-                            options={["MXN","DLS","EUR"]}
+                            options={["MXN", "DLS", "EUR"]}
                         />
                         <InputField
                             label="Valor de la operación"
@@ -111,6 +126,8 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
                             value={form.valor_operacion}
                             onChange={handleChange}
                             type="number"
+                            required
+                            error={errores.includes("valor_operacion")}
                         />
                         <InputField
                             label="Valor en letra"

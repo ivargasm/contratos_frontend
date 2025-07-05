@@ -4,8 +4,10 @@ import { useState } from "react"
 import { InputField } from "../forms/InputField"
 import { FechaTriple } from "../forms/FechaTriple"
 import { Button } from "@/components/ui/button"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DataInfoGeneral {
+    [key: string]: string | undefined;
     ciudad: string
     dia: string
     mes: string
@@ -27,6 +29,10 @@ export const InfoGeneral: React.FC<InfoGeneralProps> = ({ onNext, defaultData })
         // lugar_firma: defaultData?.lugar_firma || "",
     })
 
+    const [errores, setErrores] = useState<string[]>([])
+
+    const camposRequeridos = ["ciudad", "dia", "mes", "anio"]
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
@@ -36,6 +42,14 @@ export const InfoGeneral: React.FC<InfoGeneralProps> = ({ onNext, defaultData })
     }
 
     const handleNext = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+
+        setErrores([]) // limpiar errores previos
+
         onNext(form)
     }
 
@@ -50,9 +64,11 @@ export const InfoGeneral: React.FC<InfoGeneralProps> = ({ onNext, defaultData })
                     placeholder="Querétaro"
                     value={form.ciudad}
                     onChange={handleChange}
+                    required
+                    error={errores.includes("ciudad")}
                 />
 
-                <FechaTriple value={form} onChange={handleFechaChange} />
+                <FechaTriple value={form} onChange={handleFechaChange} errores={errores} />
 
             </div>
 

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from "../store/Store";
-import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl } from "../lib/api";
+import { useContratoStore } from "../store/useContratoStore";
+import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl, getEditableContract } from "../lib/api";
 import ProtectedRoute from "../components/ProtectedRoutes";
+import { useRouter } from "next/navigation";
 
 interface Contract {
   id: number;
@@ -14,11 +16,12 @@ interface Contract {
 }
 
 export default function ProfilePage() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, url } = useAuthStore();
+  const { setFormData, setTipoContrato, setContractId } = useContratoStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({
+  const [formDataProfile, setFormDataProfile] = useState({
     username: user?.username || '',
     email: user?.email || '',
     currentPassword: '',
@@ -27,6 +30,7 @@ export default function ProfilePage() {
   });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [availableContracts, setAvailableContracts] = useState<number | null>(null);
+  const router = useRouter();
 
 
   // Simular carga de contratos
@@ -52,7 +56,7 @@ export default function ProfilePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormDataProfile(prev => ({
       ...prev,
       [name]: value
     }));
@@ -69,13 +73,13 @@ export default function ProfilePage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.newPassword !== formData.confirmPassword) {
+    if (formDataProfile.newPassword !== formDataProfile.confirmPassword) {
       setMessage({ text: 'Las contraseñas no coinciden', type: 'error' });
       return;
     }
     try {
       setMessage({ text: 'Contraseña actualizada correctamente', type: 'success' });
-      setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
+      setFormDataProfile(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
     } catch {
       setMessage({ text: 'Error al cambiar la contraseña', type: 'error' });
     }
@@ -101,6 +105,19 @@ export default function ProfilePage() {
       month: 'long',
       day: 'numeric',
     });
+  };
+
+  const handleEditContract = async (contractId: number) => {
+    try {
+      const { type, data } = await getEditableContract(url, contractId);
+      setTipoContrato(type);
+      setFormData(data);
+      setContractId(contractId);
+      router.push(`/${type}/wizard`);
+    } catch (error) {
+      console.error("Error al obtener el contrato para editar:", error);
+      alert("No se pudo cargar el contrato para editar. Verifica si aún está disponible.");
+    }
   };
 
   return (
@@ -279,10 +296,10 @@ export default function ProfilePage() {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <button
-                                    onClick={() => window.open(`${useAuthStore.getState().url}/contracts/preview/${contract.id}`, '_blank')}
-                                    className="text-primary hover:underline"
+                                    onClick={() => handleEditContract(contract.id)}
+                                    className="text-primary hover:text-primary/80 cursor-pointer"
                                   >
-                                    Ver PDF
+                                    Editar
                                   </button>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -323,7 +340,7 @@ export default function ProfilePage() {
                                   type="text"
                                   name="username"
                                   id="username"
-                                  value={formData.username}
+                                  value={formDataProfile.username}
                                   onChange={handleInputChange}
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                 />
@@ -336,7 +353,7 @@ export default function ProfilePage() {
                                   type="email"
                                   name="email"
                                   id="email"
-                                  value={formData.email}
+                                  value={formDataProfile.email}
                                   onChange={handleInputChange}
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                 />
@@ -372,7 +389,7 @@ export default function ProfilePage() {
                                   type="password"
                                   name="currentPassword"
                                   id="currentPassword"
-                                  value={formData.currentPassword}
+                                  value={formDataProfile.currentPassword}
                                   onChange={handleInputChange}
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                   required
@@ -386,7 +403,7 @@ export default function ProfilePage() {
                                   type="password"
                                   name="newPassword"
                                   id="newPassword"
-                                  value={formData.newPassword}
+                                  value={formDataProfile.newPassword}
                                   onChange={handleInputChange}
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                   required
@@ -400,7 +417,7 @@ export default function ProfilePage() {
                                   type="password"
                                   name="confirmPassword"
                                   id="confirmPassword"
-                                  value={formData.confirmPassword}
+                                  value={formDataProfile.confirmPassword}
                                   onChange={handleInputChange}
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                   required

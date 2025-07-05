@@ -4,8 +4,10 @@
 import { GroupIdentidad } from "../forms/GroupIdentidad"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { validarCamposObligatorios } from "@/app/lib/validation"
 
 export interface DataPropietario {
+    [key: string]: string | undefined
     propietario_nombre: string
     propietario_id_tipo: string
     propietario_id: string
@@ -29,12 +31,21 @@ export const Propietario: React.FC<PropietarioProps> = ({ onNext, onBack, defaul
         propietario_estado_civil: defaultData?.propietario_estado_civil || "",
         propietario_direccion: defaultData?.propietario_direccion || "",
     })
+    const [errores, setErrores] = useState<string[]>([])
+    const camposRequeridos = ["propietario_nombre", "propietario_direccion"]
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = () => {
+        const camposFaltantes = validarCamposObligatorios(form, camposRequeridos)
+        if (camposFaltantes.length > 0) {
+            setErrores(camposFaltantes)
+            return
+        }
+
+        setErrores([]) // limpiar errores previos
         onNext(form)
     }
 
@@ -42,7 +53,14 @@ export const Propietario: React.FC<PropietarioProps> = ({ onNext, onBack, defaul
         <div className="space-y-6 w-full mx-auto p-6 bg-card rounded-xl shadow-md">
             <h2 className="text-2xl font-semibold text-secondary">Datos del propietario</h2>
 
-            <GroupIdentidad prefix="propietario" form={Object.fromEntries(Object.entries(form))} onChange={handleChange} />
+            <GroupIdentidad
+                prefix="propietario"
+                form={Object.fromEntries(
+                    Object.entries(form).map(([k, v]) => [k, v ?? ""])
+                )}
+                onChange={handleChange}
+                errores={errores}
+            />
 
             <div className="flex justify-between pt-4">
                 <Button variant="outline" onClick={onBack} className="cursor-pointer">
