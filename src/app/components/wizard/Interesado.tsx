@@ -5,6 +5,8 @@ import { GroupIdentidad } from "../forms/GroupIdentidad"
 import { Button } from "@/components/ui/button"
 import { useState } from "react";
 import { validarCamposObligatorios } from "@/app/lib/validation";
+import { useContratoStore } from "@/app/store/useContratoStore";
+import { TipoContrato, contract_types_buyer } from "@/app/lib/contractTypes";
 
 export interface DataInteresado {
     [key: string]: string | undefined
@@ -31,7 +33,8 @@ export const Interesado: React.FC<InteresadoProps> = ({ onNext, onBack, defaultD
         interesado_estado_civil: defaultData?.interesado_estado_civil || "",
         interesado_direccion: defaultData?.interesado_direccion || "",
     })
-
+    const { tipoContrato } = useContratoStore()
+    
     const [errores, setErrores] = useState<string[]>([])
 
     const camposRequeridos = ["interesado_nombre", "interesado_direccion"]
@@ -53,7 +56,9 @@ export const Interesado: React.FC<InteresadoProps> = ({ onNext, onBack, defaultD
 
     return (
         <div className="space-y-6 w-full mx-auto p-6 bg-card rounded-xl shadow-md">
-            <h2 className="text-2xl font-semibold text-secondary">Datos del interesado</h2>
+            <h2 className="text-2xl font-semibold text-secondary">
+                Datos del {tipoContrato && contract_types_buyer[tipoContrato as TipoContrato] ? contract_types_buyer[tipoContrato as TipoContrato] : "interesado"}
+            </h2>
 
             <GroupIdentidad
                 prefix="interesado"

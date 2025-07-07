@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { SelectField } from "../forms/SelectField"
 import { validarCamposObligatorios } from "@/app/lib/validation"
+import { useContratoStore } from "@/app/store/useContratoStore"
 
 export interface DatosPlazos {
     [key: string]: string | undefined
@@ -32,6 +33,7 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
         condiciones_renovacion: defaultData?.condiciones_renovacion || "",
         preaviso_terminacion: defaultData?.preaviso_terminacion || "",
     })
+    const { tipoContrato } = useContratoStore()
     const [errores, setErrores] = useState<string[]>([])
     const camposRequeridos = ["duracion", "fecha_inicio", "fecha_fin"]
 
@@ -84,29 +86,33 @@ export const Plazos: React.FC<PlazosProps> = ({ onNext, onBack, defaultData }) =
                     required
                     error={errores.includes("fecha_fin")}
                 />
-                <SelectField
-                    label="Renovación automática"
-                    name="renovacion_automatica"
-                    value={form.renovacion_automatica}
-                    onChange={(e) => handleChange(e as unknown as React.ChangeEvent<HTMLInputElement>)} // TypeScript workaround
-                    options={["Sí", "No"]}
-                />
-                {form.renovacion_automatica === "Sí" && (
-                    <InputField
-                        label="Condiciones de renovación"
-                        name="condiciones_renovacion"
-                        placeholder="Por escrito"
-                        value={form.condiciones_renovacion}
-                        onChange={handleChange}
-                    />
+                { tipoContrato !== "confidencialidad" && (
+                    <>
+                        <SelectField
+                            label="Renovación automática"
+                            name="renovacion_automatica"
+                            value={form.renovacion_automatica}
+                            onChange={(e) => handleChange(e as unknown as React.ChangeEvent<HTMLInputElement>)} // TypeScript workaround
+                            options={["Sí", "No"]}
+                        />
+                        {form.renovacion_automatica === "Sí" && (
+                            <InputField
+                                label="Condiciones de renovación"
+                                name="condiciones_renovacion"
+                                placeholder="Por escrito"
+                                value={form.condiciones_renovacion}
+                                onChange={handleChange}
+                            />
+                        )}
+                        <InputField
+                            label="Preaviso de terminación"
+                            name="preaviso_terminacion"
+                            placeholder="30 días"
+                            value={form.preaviso_terminacion}
+                            onChange={handleChange}
+                        />                    
+                    </>
                 )}
-                <InputField
-                    label="Preaviso de terminación"
-                    name="preaviso_terminacion"
-                    placeholder="30 días"
-                    value={form.preaviso_terminacion}
-                    onChange={handleChange}
-                />
             </div>
 
             <div className="flex justify-between pt-4">

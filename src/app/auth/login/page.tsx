@@ -51,9 +51,8 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-white dark:bg-gray-900 min-w-full">
 
-            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-            <form onSubmit={handleLogin}>
-                <Card className="max-w-md md:max-w-lg shadow-lg bg-white dark:bg-gray-800">
+            <form onSubmit={handleLogin} className="w-full max-w-md">
+                <Card className=" shadow-lg bg-white dark:bg-gray-800">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">Iniciar sesión</CardTitle>
                         <CardDescription className="text-center text-gray-500 dark:text-gray-400">
@@ -122,6 +121,7 @@ export default function LoginPage() {
                             </Link>
                         </p>
                     </CardFooter>
+                {error && <p className="text-red-500 text-sm mb-2 text-center">{error}</p>}
                 </Card>
 
             </form>

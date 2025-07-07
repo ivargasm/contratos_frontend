@@ -14,7 +14,7 @@ export function Footer() {
                     <h3 className="text-lg font-semibold mb-3">Navegación</h3>
                     <ul className="space-y-2 text-sm">
                         <li><a href="#features" className="hover:underline">Características</a></li>
-                        <li><a href="#precios" className="hover:underline">Planes</a></li>
+                        {/* <li><a href="#precios" className="hover:underline">Planes</a></li> */}
                         <li><a href="#faq" className="hover:underline">Preguntas frecuentes</a></li>
                         <li><a href="#contacto" className="hover:underline">Contacto</a></li>
                     </ul>
@@ -24,7 +24,7 @@ export function Footer() {
                     <h3 className="text-lg font-semibold mb-3">Contacto</h3>
                     <ul className="text-sm space-y-2 text-muted-foreground">
                         <li>Email: <a href="mailto:soporte@tuapplegal.com" className="hover:underline">soporte@tuapplegal.com</a></li>
-                        <li>Teléfono: <a href="tel:+525512345678" className="hover:underline">+52 55 1234 5678</a></li>
+                        {/* <li>Teléfono: <a href="tel:+525512345678" className="hover:underline">+52 55 1234 5678</a></li> */}
                         <li>Horario: Lun a Vie, 9:00 a 18:00 hrs</li>
                     </ul>
                 </div>

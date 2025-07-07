@@ -38,7 +38,8 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
         deposito_garantia: defaultData?.deposito_garantia || "",
     })
     const [errores, setErrores] = useState<string[]>([])
-    const camposRequeridos = ["forma_pago", "fechas_pago", "lugar_pago", ...(tipoContrato === "arrendamiento" ? ["valor_operacion"] : [])]
+    const camposRequeridos = ["forma_pago", "fechas_pago", "lugar_pago",
+        ...(tipoContrato === "arrendamiento" || tipoContrato === "servicios" ? ["valor_operacion"] : [])]
     // Actualizar valor_en_letras cuando cambia valor_operacion o moneda
     useEffect(() => {
         if (form.valor_operacion && form.moneda) {
@@ -94,15 +95,17 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                     error={errores.includes("lugar_pago")}
                 />
                 {tipoContrato === "arrendamiento" && (
+                    <InputField
+                        label="Depósito de garantía (meses)"
+                        name="deposito_garantia"
+                        placeholder="3"
+                        value={form.deposito_garantia}
+                        onChange={handleChange}
+                        type="number"
+                    />
+                )}
+                {tipoContrato === "arrendamiento" || tipoContrato === "servicios" && (
                     <>
-                        <InputField
-                            label="Depósito de garantía (meses)"
-                            name="deposito_garantia"
-                            placeholder="3"
-                            value={form.deposito_garantia}
-                            onChange={handleChange}
-                            type="number"
-                        />
                         <SelectField
                             label="Moneda"
                             name="moneda"

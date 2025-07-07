@@ -5,6 +5,10 @@ import { GroupIdentidad } from "../forms/GroupIdentidad"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { validarCamposObligatorios } from "@/app/lib/validation"
+import { useContratoStore } from "@/app/store/useContratoStore"
+// ...existing code...
+import { TipoContrato, contract_types_owner } from "@/app/lib/contractTypes";
+// ...existing code...
 
 export interface DataPropietario {
     [key: string]: string | undefined
@@ -33,7 +37,8 @@ export const Propietario: React.FC<PropietarioProps> = ({ onNext, onBack, defaul
     })
     const [errores, setErrores] = useState<string[]>([])
     const camposRequeridos = ["propietario_nombre", "propietario_direccion"]
-
+    const { tipoContrato } = useContratoStore()
+    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
@@ -51,7 +56,9 @@ export const Propietario: React.FC<PropietarioProps> = ({ onNext, onBack, defaul
 
     return (
         <div className="space-y-6 w-full mx-auto p-6 bg-card rounded-xl shadow-md">
-            <h2 className="text-2xl font-semibold text-secondary">Datos del propietario</h2>
+            <h2 className="text-2xl font-semibold text-secondary">
+                Datos del {tipoContrato && contract_types_owner[tipoContrato as TipoContrato] ? contract_types_owner[tipoContrato as TipoContrato] : "propietario"}
+            </h2>
 
             <GroupIdentidad
                 prefix="propietario"

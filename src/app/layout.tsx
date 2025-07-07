@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Contratos",
+  title: "EasyContracts",
   description: "Generador de contratos electrónicos",
 };
 
