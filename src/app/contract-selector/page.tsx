@@ -56,7 +56,7 @@ const contractTypes = [
         value: "otro",
         type: "otro",
         icon: FileText,
-        description: "Personaliza un contrato desde cero.",
+        description: "Próximamente más tipos de contratos. ¡Danos tu opinión!",
     },
 ]
 
