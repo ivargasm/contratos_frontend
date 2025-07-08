@@ -23,7 +23,7 @@ export function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-3">Contacto</h3>
                     <ul className="text-sm space-y-2 text-muted-foreground">
-                        <li>Email: <a href="mailto:soporte@tuapplegal.com" className="hover:underline">soporte@tuapplegal.com</a></li>
+                        <li>Email: <a href="mailto:contacto@easycontract.com.mx" className="hover:underline">contacto@easycontract.com.mx</a></li>
                         {/* <li>Teléfono: <a href="tel:+525512345678" className="hover:underline">+52 55 1234 5678</a></li> */}
                         <li>Horario: Lun a Vie, 9:00 a 18:00 hrs</li>
                     </ul>
