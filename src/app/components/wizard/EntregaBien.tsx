@@ -69,13 +69,13 @@ export const EntregaBien: React.FC<EntregaBienProps> = ({ onNext, onBack, defaul
                     required
                     error={errores.includes("fecha_entrega")}
                 />
-                <InputField
+                {/* <InputField
                     label="Acta de entrega"
                     name="acta_entrega"
                     placeholder="Acta de entrega"
                     value={form.acta_entrega}
                     onChange={handleChange}
-                />
+                /> */}
             </div>
 
             <div className="flex justify-between pt-4">
