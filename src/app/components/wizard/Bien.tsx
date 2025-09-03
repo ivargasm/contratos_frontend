@@ -44,7 +44,8 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
 
     const camposRequeridos = ["descripcion_bien",
         ...(tipoContrato === "compra-venta" ? ["valor_operacion"] : []),
-        ...(tipoContrato === "arrendamiento" || tipoContrato === "comodato" ? ["uso_destinado", "direccion"] : [])
+        ...(tipoContrato === "arrendamiento" || tipoContrato === "comodato" ? ["uso_destinado"] : []),
+        ...((tipoContrato === "arrendamiento" || tipoContrato === "comodato") && form.tipo_bien === "Inmueble" ? ["direccion"] : [])
     ]
 
     // Actualizar valor_en_letras cuando cambia valor_operacion o moneda
