@@ -104,7 +104,7 @@ export const Pago: React.FC<Props> = ({ onNext, onBack, defaultData }) => {
                         type="number"
                     />
                 )}
-                {tipoContrato === "arrendamiento" || tipoContrato === "servicios" && (
+                {(tipoContrato === "arrendamiento" || tipoContrato === "servicios") && (
                     <>
                         <SelectField
                             label="Moneda"
