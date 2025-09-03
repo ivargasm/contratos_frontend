@@ -77,7 +77,7 @@ export const Bien: React.FC<BienProps> = ({ onNext, onBack, defaultData }) => {
             <h2 className="text-2xl font-semibold text-secondary">Información del bien</h2>
 
             <div className="grid gap-4">
-                {(tipoContrato === "arrendamiento" || tipoContrato === "comodato") && (
+                {(tipoContrato === "arrendamiento" || tipoContrato === "comodato" || tipoContrato === "compra-venta") && (
                     <SelectField
                         label="Tipo de bien"
                         name="tipo_bien"
