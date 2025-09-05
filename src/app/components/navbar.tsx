@@ -40,7 +40,7 @@ export default function Navbar() {
         <nav className="fixed top-0 left-0 w-full bg-white text-primary dark:bg-foreground dark:text-primary shadow-md z-50">
             <div className="max-w-[90%] mx-auto px-6 py-4 flex justify-between items-center">
                 <Link href="/" className="text-xl font-bold text-slate-700">
-                    🧑‍🚀 Contratos
+                    ⚖️ EasyContract
                 </Link>
 
                 {/* Botón de menú en móviles */}
