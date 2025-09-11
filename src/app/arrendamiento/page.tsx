@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Lightbulb, PencilLine, Home, Car, ShieldCheck } from "lucide-react"
+import { PencilLine, Home, Car, ShieldCheck } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -56,15 +56,10 @@ export default function ArrendamientoIntroPage() {
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Link href="/arrendamiento/wizard" className="w-full sm:w-auto">
-                            <Button size="lg" className="w-full cursor-pointer">
-                                <PencilLine className="mr-2 h-4 w-4" /> Llenar Paso a Paso
-                            </Button>
-                        </Link>
-                        <Link href="/arrendamiento/ia" className="w-full sm:w-auto">
-                            <Button variant="outline" size="lg" className="w-full cursor-pointer">
-                                <Lightbulb className="mr-2 h-4 w-4" /> Generar con IA
+                    <div className="pt-2">
+                        <Link href="/arrendamiento/wizard">
+                            <Button size="lg" className="cursor-pointer">
+                                <PencilLine className="mr-2 h-4 w-4" /> Crear Contrato
                             </Button>
                         </Link>
                     </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { FileText, Handshake, Key, ClipboardCheck, PencilLine, Lightbulb } from "lucide-react"
+import { FileText, Handshake, Key, ClipboardCheck, PencilLine } from "lucide-react"
 import Link from "next/link"
 
 export default function ComodatoIntroPage() {
@@ -59,15 +59,10 @@ export default function ComodatoIntroPage() {
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Link href="/comodato/wizard" className="w-full sm:w-auto">
-                            <Button size="lg" className="w-full cursor-pointer">
-                                <PencilLine className="mr-2 h-4 w-4" /> Llenar Paso a Paso
-                            </Button>
-                        </Link>
-                        <Link href="/comodato/ia" className="w-full sm:w-auto">
-                            <Button variant="outline" size="lg" className="w-full cursor-pointer">
-                                <Lightbulb className="mr-2 h-4 w-4" /> Generar con IA
+                    <div className="pt-2">
+                        <Link href="/comodato/wizard">
+                            <Button size="lg" className="cursor-pointer">
+                                <PencilLine className="mr-2 h-4 w-4" /> Crear Contrato
                             </Button>
                         </Link>
                     </div>

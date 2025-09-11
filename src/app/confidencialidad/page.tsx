@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Lightbulb, PencilLine } from "lucide-react"
+import { PencilLine } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -24,15 +24,10 @@ export default function ConfidencialidadIntroPage() {
                         Define qué información es confidencial, las obligaciones de las partes, el período de confidencialidad y las consecuencias en caso de incumplimiento, protegiendo así la propiedad intelectual y la ventaja competitiva.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div>
                         <Link href="/confidencialidad/wizard">
-                            <Button size="lg" className="w-full sm:w-auto cursor-pointer">
-                                <PencilLine className="mr-2 h-4 w-4" /> Llenar Formulario
-                            </Button>
-                        </Link>
-                        <Link href="/confidencialidad/ia">
-                            <Button variant="outline" size="lg" className="w-full sm:w-auto cursor-pointer">
-                                <Lightbulb className="mr-2 h-4 w-4" /> Usar IA para Generarlo
+                            <Button size="lg" className="cursor-pointer">
+                                <PencilLine className="mr-2 h-4 w-4" /> Crear Acuerdo
                             </Button>
                         </Link>
                     </div>
