@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import { generatePurchaseSaleContract, getPresignedUrl, updateContract } from '@/app/lib/api';
 
 export default function ContratoPrestacionServiciosInteractivo() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { formData, updateFormData } = useContratoStore();
     const { tipoContrato, contractId, clearFormData, clearContractId } = useContratoStore()
     const { url } = useAuthStore()
