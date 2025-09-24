@@ -17,12 +17,12 @@ export const BloqueDeclaracionesComodato = () => {
                 <h3 className="font-bold text-xl mb-3">I.- Declara &quot;El Comodante&quot;:</h3>
                 {formData.tipo_bien === "Mueble" ? (
                     <>
-                        <p className="ml-4"><span className="font-bold">A)</span> Ser el legítimo propietario del bien mueble: <span className="font-bold"><InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="[Descripción del bien mueble]" widthClass="w-full"/></span>, que en lo sucesivo se denominará <span className="font-bold">EL BIEN MUEBLE</span>.</p>
+                        <p className="ml-4"><span className="font-bold">A)</span> Ser el legítimo propietario del bien mueble: <span className="font-bold"><InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="[Descripción del bien mueble]" widthClass=""/></span>, que en lo sucesivo se denominará <span className="font-bold">EL BIEN MUEBLE</span>.</p>
                         <p className="ml-4"><span className="font-bold">B)</span> Que EL BIEN MUEBLE se encuentra libre de gravamen, en buenas condiciones, y sin vicios ocultos.</p>
                     </>
                 ) : (
                     <>
-                        <p className="ml-4"><span className="font-bold">A)</span> Ser el propietario del inmueble ubicado en <InlineInput value={formData.direccion || ''} onChange={handleChange('direccion')} placeholder="[Dirección completa del inmueble]" widthClass="w-full"/>, que en lo sucesivo se denominará <span className="font-bold">EL BIEN INMUEBLE</span>.</p>
+                        <p className="ml-4"><span className="font-bold">A)</span> Ser el propietario del inmueble ubicado en <InlineInput value={formData.direccion || ''} onChange={handleChange('direccion')} placeholder="[Dirección completa del inmueble]" widthClass=""/>, que en lo sucesivo se denominará <span className="font-bold">EL BIEN INMUEBLE</span>.</p>
                         <p className="ml-4"><span className="font-bold">B)</span> Que EL BIEN INMUEBLE se encuentra al corriente en pagos de servicios y libre de vicios ocultos.</p>
                         <p className="ml-4"><span className="font-bold">C)</span> Que se encuentra en óptimas condiciones de uso y conservación.</p>
                     </>
@@ -66,15 +66,15 @@ export const BloqueClausulasComodato = () => {
             <div>
                 <p><span className="font-bold">PRIMERA.- OBJETO.</span> &quot;El COMODANTE&quot; da en COMODATO al &quot;COMODATARIO&quot; el bien descrito como:</p>
                 <div className="bg-muted p-4 rounded-md mt-2 space-y-2">
-                    <p><span className="font-bold">Descripción:</span> <InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="________________" widthClass="w-full"/></p>
-                    <p><span className="font-bold">Accesorios incluidos:</span> <InlineInput value={formData.accesorios || ''} onChange={handleChange('accesorios')} placeholder="________________" widthClass="w-full"/></p>
-                    <p><span className="font-bold">Estado actual:</span> <InlineInput value={formData.estado_bien || ''} onChange={handleChange('estado_bien')} placeholder="________________" widthClass="w-full"/></p>
+                    <p><span className="font-bold">Descripción:</span> <InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="________________" widthClass=""/></p>
+                    <p><span className="font-bold">Accesorios incluidos:</span> <InlineInput value={formData.accesorios || ''} onChange={handleChange('accesorios')} placeholder="________________" widthClass=""/></p>
+                    <p><span className="font-bold">Estado actual:</span> <InlineInput value={formData.estado_bien || ''} onChange={handleChange('estado_bien')} placeholder="________________" widthClass=""/></p>
                 </div>
-                <p className="mt-2">El bien será utilizado exclusivamente para: <InlineInput value={formData.uso_destinado || ''} onChange={handleChange('uso_destinado')} placeholder="________________" widthClass="w-64"/></p>
+                <p className="mt-2">El bien será utilizado exclusivamente para: <InlineInput value={formData.uso_destinado || ''} onChange={handleChange('uso_destinado')} placeholder="________________" widthClass=""/></p>
             </div>
             
             <div>
-                <p><span className="font-bold">SEGUNDA.- VIGENCIA.</span> El presente contrato de COMODATO tendrá una duración determinada del día <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span> al día <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span>, o en su caso será de carácter <span className="font-bold"><InlineInput value={formData.tipo_vigencia || ''} onChange={handleChange('tipo_vigencia')} placeholder="vitalicio" widthClass="w-32"/></span>, conforme a lo pactado por las partes.</p>
+                <p><span className="font-bold">SEGUNDA.- VIGENCIA.</span> El presente contrato de COMODATO tendrá una duración determinada del día <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass=""/></span> al día <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass=""/></span>, o en su caso será de carácter <span className="font-bold"><InlineInput value={formData.tipo_vigencia || ''} onChange={handleChange('tipo_vigencia')} placeholder="vitalicio" widthClass=""/></span>, conforme a lo pactado por las partes.</p>
             </div>
 
             <div>
@@ -179,7 +179,7 @@ export const BloqueClausulasComodato = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">DÉCIMA OCTAVA.- JURISDICCIÓN.</span> Para la interpretación y cumplimiento de este contrato, las partes se someten a la legislación aplicable y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Querétaro, Querétaro" widthClass="w-64"/></span>.</p>
+                <p><span className="font-bold">DÉCIMA OCTAVA.- JURISDICCIÓN.</span> Para la interpretación y cumplimiento de este contrato, las partes se someten a la legislación aplicable y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Querétaro, Querétaro" widthClass=""/></span>.</p>
             </div>
 
             {formData.clausulas_adicionales && (

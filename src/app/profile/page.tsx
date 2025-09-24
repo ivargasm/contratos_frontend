@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from "../store/Store";
 import { useContratoStore } from "../store/useContratoStore";
-import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl, getEditableContract } from "../lib/api";
+import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl, getEditableContract, changePassword } from "../lib/api";
 import ProtectedRoute from "../components/ProtectedRoutes";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Contract {
   id: number;
@@ -28,7 +29,7 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: ''
   });
-  const [message, setMessage] = useState({ text: '', type: '' });
+
   const [availableContracts, setAvailableContracts] = useState<number | null>(null);
   const router = useRouter();
 
@@ -54,6 +55,16 @@ export default function ProfilePage() {
   }, []);
 
 
+  const validatePassword = (password: string) => {
+    const errors = [];
+    if (password.length < 8) errors.push('mínimo 8 caracteres');
+    if (!/[A-Z]/.test(password)) errors.push('al menos una mayúscula');
+    if (!/[a-z]/.test(password)) errors.push('al menos una minúscula');
+    if (!/\d/.test(password)) errors.push('al menos un número');
+    if (!/[!@#$%^&*_(),.?":{}|<>\-+=\[\]~]/.test(password)) errors.push('al menos un carácter especial');
+    return errors;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormDataProfile(prev => ({
@@ -65,23 +76,40 @@ export default function ProfilePage() {
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setMessage({ text: 'Perfil actualizado correctamente', type: 'success' });
+      toast.success('Perfil actualizado correctamente');
     } catch {
-      setMessage({ text: 'Error al actualizar el perfil', type: 'error' });
+      toast.error('Error al actualizar el perfil');
     }
   };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validar que las contraseñas coincidan
     if (formDataProfile.newPassword !== formDataProfile.confirmPassword) {
-      setMessage({ text: 'Las contraseñas no coinciden', type: 'error' });
+      toast.error('Las contraseñas no coinciden');
       return;
     }
+    
+    // Validar que la nueva contraseña no sea igual a la actual
+    if (formDataProfile.currentPassword === formDataProfile.newPassword) {
+      toast.error('La nueva contraseña debe ser diferente a la actual');
+      return;
+    }
+    
+    // Validar requisitos de la nueva contraseña
+    const passwordErrors = validatePassword(formDataProfile.newPassword);
+    if (passwordErrors.length > 0) {
+      toast.error(`La contraseña debe tener: ${passwordErrors.join(', ')}`);
+      return;
+    }
+    
     try {
-      setMessage({ text: 'Contraseña actualizada correctamente', type: 'success' });
+      await changePassword(url, formDataProfile.currentPassword, formDataProfile.newPassword);
+      toast.success('Contraseña actualizada correctamente');
       setFormDataProfile(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-    } catch {
-      setMessage({ text: 'Error al cambiar la contraseña', type: 'error' });
+    } catch (error: unknown) {
+      toast.error((error as Error).message || 'Error al cambiar la contraseña');
     }
   };
 
@@ -173,12 +201,6 @@ export default function ProfilePage() {
               </nav>
 
               <div className="p-6">
-                {message.text && (
-                  <div className={`mb-4 p-4 rounded ${message.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}>
-                    {message.text}
-                  </div>
-                )}
 
                 {activeTab === 'profile' && (
                   <div className="space-y-6">
@@ -342,6 +364,7 @@ export default function ProfilePage() {
                                   id="username"
                                   value={formDataProfile.username}
                                   onChange={handleInputChange}
+                                  disabled
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                 />
                               </div>
@@ -355,6 +378,7 @@ export default function ProfilePage() {
                                   id="email"
                                   value={formDataProfile.email}
                                   onChange={handleInputChange}
+                                  disabled
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                 />
                               </div>
@@ -408,6 +432,30 @@ export default function ProfilePage() {
                                   className="mt-1 block w-full border border-input rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring sm:text-sm bg-background"
                                   required
                                 />
+                                {formDataProfile.newPassword && (
+                                  <div className="mt-2 text-xs space-y-1">
+                                    <div className={`flex items-center ${formDataProfile.newPassword.length >= 8 ? 'text-green-600' : 'text-red-600'}`}>
+                                      <span className="mr-1">{formDataProfile.newPassword.length >= 8 ? '✓' : '✗'}</span>
+                                      Mínimo 8 caracteres
+                                    </div>
+                                    <div className={`flex items-center ${/[A-Z]/.test(formDataProfile.newPassword) ? 'text-green-600' : 'text-red-600'}`}>
+                                      <span className="mr-1">{/[A-Z]/.test(formDataProfile.newPassword) ? '✓' : '✗'}</span>
+                                      Al menos una mayúscula
+                                    </div>
+                                    <div className={`flex items-center ${/[a-z]/.test(formDataProfile.newPassword) ? 'text-green-600' : 'text-red-600'}`}>
+                                      <span className="mr-1">{/[a-z]/.test(formDataProfile.newPassword) ? '✓' : '✗'}</span>
+                                      Al menos una minúscula
+                                    </div>
+                                    <div className={`flex items-center ${/\d/.test(formDataProfile.newPassword) ? 'text-green-600' : 'text-red-600'}`}>
+                                      <span className="mr-1">{/\d/.test(formDataProfile.newPassword) ? '✓' : '✗'}</span>
+                                      Al menos un número
+                                    </div>
+                                    <div className={`flex items-center ${/[!@#$%^&*_(),.?":{}|<>\-+=\[\]~]/.test(formDataProfile.newPassword) ? 'text-green-600' : 'text-red-600'}`}>
+                                      <span className="mr-1">{/[!@#$%^&*_(),.?":{}|<>\-+=\[\]~]/.test(formDataProfile.newPassword) ? '✓' : '✗'}</span>
+                                      Al menos un carácter especial (!@#$%^&*_(),.?&quot;:{}|&lt;&gt;-+=[]~)
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                               <div>
                                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground">

@@ -15,13 +15,13 @@ export const BloqueLugarFecha = () => {
     return (
         <p className="text-lg leading-relaxed">
             En la ciudad de{' '}
-            <InlineInput value={formData.ciudad || ''} onChange={handleChange('ciudad')} placeholder="Ciudad" widthClass="w-48" />{' '}
+            <InlineInput value={formData.ciudad || ''} onChange={handleChange('ciudad')} placeholder="Ciudad" widthClass="" />{' '}
             el día{' '}
-            <InlineInput value={formData.dia || ''} onChange={handleChange('dia')} placeholder="Día" widthClass="w-16" type="number" />{' '}
+            <InlineInput value={formData.dia || ''} onChange={handleChange('dia')} placeholder="Día" widthClass="" type="number" />{' '}
             de{' '}
-            <InlineInput value={formData.mes || ''} onChange={handleChange('mes')} placeholder="Mes" widthClass="w-32" />{' '}
+            <InlineInput value={formData.mes || ''} onChange={handleChange('mes')} placeholder="Mes" widthClass="" />{' '}
             del año{' '}
-            <InlineInput value={formData.anio || ''} onChange={handleChange('anio')} placeholder="Año" widthClass="w-20" type="number" />.
+            <InlineInput value={formData.anio || ''} onChange={handleChange('anio')} placeholder="Año" widthClass="" type="number" />.
         </p>
     );
 };
@@ -56,7 +56,7 @@ export const BloquePartes: React.FC<BloquePartesProps> = ({ rolPropietario, rolI
             
             <p>
                 <span className="font-bold">DE UNA PARTE,</span>{' '}
-                <InlineInput value={formData.propietario_nombre || ''} onChange={handleChange('propietario_nombre')} placeholder="Nombre completo" widthClass="w-64" />,
+                <InlineInput value={formData.propietario_nombre || ''} onChange={handleChange('propietario_nombre')} placeholder="Nombre completo" widthClass="" />,
                 mayor de edad,{' '}
                 de nacionalidad <InlineSelect value={formData.propietario_nacionalidad || ''} onChange={handleSelectChange('propietario_nacionalidad')} options={nacionalidadOptions} placeholder="nacionalidad"  />, {' '}
                 <InlineSelect value={formData.propietario_estado_civil || ''} onChange={handleSelectChange('propietario_estado_civil')} options={estadoCivilOptions} placeholder="estado civil"  />, {' '}
@@ -68,13 +68,13 @@ export const BloquePartes: React.FC<BloquePartesProps> = ({ rolPropietario, rolI
                     <>número <InlineInput value={formData.propietario_id || ''} onChange={handleChange('propietario_id')} placeholder="123456"  />, </>
                 )}
                 con domicilio en{' '}
-                <InlineInput value={formData.propietario_direccion || ''} onChange={handleChange('propietario_direccion')} placeholder="" widthClass="w-80" />,
+                <InlineInput value={formData.propietario_direccion || ''} onChange={handleChange('propietario_direccion')} placeholder="" widthClass="" />,
                 a quien en adelante se le denominará &quot;<span className="font-bold">EL {rolPropietario}</span>&quot;.
             </p>
             
             <p>
                 <span className="font-bold">DE OTRA PARTE,</span>{' '}
-                <InlineInput value={formData.interesado_nombre || ''} onChange={handleChange('interesado_nombre')} placeholder="Nombre completo" widthClass="w-64" />,
+                <InlineInput value={formData.interesado_nombre || ''} onChange={handleChange('interesado_nombre')} placeholder="Nombre completo" widthClass="" />,
                 mayor de edad,{' '}
                 de nacionalidad <InlineSelect value={formData.interesado_nacionalidad || ''} onChange={handleSelectChange('interesado_nacionalidad')} options={nacionalidadOptions} placeholder="nacionalidad"  />, {' '}
                 <InlineSelect value={formData.interesado_estado_civil || ''} onChange={handleSelectChange('interesado_estado_civil')} options={estadoCivilOptions} placeholder="estado civil"  />, {' '}
@@ -86,7 +86,7 @@ export const BloquePartes: React.FC<BloquePartesProps> = ({ rolPropietario, rolI
                     <>número <InlineInput value={formData.interesado_id || ''} onChange={handleChange('interesado_id')} placeholder="123456"  />, </>
                 )}
                 con domicilio en{' '}
-                <InlineInput value={formData.interesado_direccion || ''} onChange={handleChange('interesado_direccion')} placeholder="" widthClass="w-80" />,
+                <InlineInput value={formData.interesado_direccion || ''} onChange={handleChange('interesado_direccion')} placeholder="" widthClass="" />,
                 a quien en adelante se le denominará &quot;<span className="font-bold">EL {rolInteresado}</span>&quot;.
             </p>
             

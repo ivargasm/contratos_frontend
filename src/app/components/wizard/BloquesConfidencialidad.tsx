@@ -133,7 +133,7 @@ export const BloqueClausulasConfidencialidad = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">SÉPTIMA.- VIGENCIA Y TERMINACIÓN.</span> El presente Acuerdo entrará en vigor en la fecha de su firma y permanecerá vigente por un período de <span className="font-bold"><InlineInput value={formData.duracion || ''} onChange={handleChange('duracion')} placeholder="un (1) año" widthClass="w-32"/></span> a partir del <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span> y hasta el <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span>.</p>
+                <p><span className="font-bold">SÉPTIMA.- VIGENCIA Y TERMINACIÓN.</span> El presente Acuerdo entrará en vigor en la fecha de su firma y permanecerá vigente por un período de <span className="font-bold"><InlineInput value={formData.duracion || ''} onChange={handleChange('duracion')} placeholder="un (1) año" widthClass=""/></span> a partir del <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass=""/></span> y hasta el <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass=""/></span>.</p>
             </div>
 
             <div>
@@ -149,7 +149,7 @@ export const BloqueClausulasConfidencialidad = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para la interpretación y cumplimiento de este Acuerdo, &quot;Las Partes&quot; se someten expresamente a las leyes aplicables de México y a la jurisdicción de los tribunales competentes en la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass="w-80"/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
+                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para la interpretación y cumplimiento de este Acuerdo, &quot;Las Partes&quot; se someten expresamente a las leyes aplicables de México y a la jurisdicción de los tribunales competentes en la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass=""/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
             </div>
         </div>
     );

@@ -17,13 +17,13 @@ export const BloqueDeclaracionesArrendamiento = () => {
                 <h3 className="font-bold text-xl mb-3">I.- Declara &quot;El Arrendador&quot;:</h3>
                 {formData.tipo_bien === "Mueble" ? (
                     <>
-                        <p className="ml-4"><span className="font-bold">A)</span> Ser el único y legítimo propietario y/o poseedor del siguiente bien: <span className="font-bold"><InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="[Descripción completa del bien mueble]" widthClass="w-full"/></span>, que en lo sucesivo se le denominará <span className="font-bold">EL BIEN MUEBLE</span>.</p>
+                        <p className="ml-4"><span className="font-bold">A)</span> Ser el único y legítimo propietario y/o poseedor del siguiente bien: <span className="font-bold"><InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="[Descripción completa del bien mueble]" widthClass=""/></span>, que en lo sucesivo se le denominará <span className="font-bold">EL BIEN MUEBLE</span>.</p>
                         <p className="ml-4"><span className="font-bold">B)</span> Que <span className="font-bold">EL BIEN MUEBLE</span> se encuentra libre de todo gravamen o limitación de dominio y al corriente de sus obligaciones legales.</p>
                         <p className="ml-4"><span className="font-bold">C)</span> Que <span className="font-bold">EL BIEN MUEBLE</span> se encuentra en perfectas condiciones de funcionamiento y sin vicios ocultos.</p>
                     </>
                 ) : (
                     <>
-                        <p className="ml-4"><span className="font-bold">A)</span> Ser el único y legítimo propietario del inmueble ubicado en <InlineInput value={formData.direccion || ''} onChange={handleChange('direccion')} placeholder="[Dirección completa del inmueble]" widthClass="w-full"/>, que en lo sucesivo se le denominará <span className="font-bold">EL BIEN INMUEBLE</span>.</p>
+                        <p className="ml-4"><span className="font-bold">A)</span> Ser el único y legítimo propietario del inmueble ubicado en <InlineInput value={formData.direccion || ''} onChange={handleChange('direccion')} placeholder="[Dirección completa del inmueble]" widthClass=""/>, que en lo sucesivo se le denominará <span className="font-bold">EL BIEN INMUEBLE</span>.</p>
                         <p className="ml-4"><span className="font-bold">B)</span> Que <span className="font-bold">EL BIEN INMUEBLE</span> se encuentra al corriente en sus pagos de servicios (agua, electricidad, predial), y no tiene vicios ocultos.</p>
                         <p className="ml-4"><span className="font-bold">C)</span> Que <span className="font-bold">EL BIEN INMUEBLE</span> se encuentra en perfectas condiciones estructurales, estéticas y de pleno uso.</p>
                     </>
@@ -77,11 +77,11 @@ export const BloqueClausulasArrendamiento = () => {
     return (
         <div className="space-y-6 text-lg leading-relaxed">
             <div>
-                <p><span className="font-bold">PRIMERA.- OBJETO.</span> &quot;El Arrendador&quot; otorga el uso y goce temporal de <span className="font-bold">{formData.tipo_bien === "Mueble" ? "EL BIEN MUEBLE" : "EL BIEN INMUEBLE"}</span> al &quot;Arrendatario&quot;, quien lo recibe para {formData.tipo_bien === "Inmueble" ? (<>fines exclusivos de <span className="font-bold"><InlineInput value={formData.uso_destinado || ''} onChange={handleChange('uso_destinado')} placeholder="CASA HABITACIÓN" widthClass="w-48"/></span></>) : "los fines lícitos que convengan a sus intereses, comprometiéndose a darle el uso adecuado a su naturaleza"}.</p>
+                <p><span className="font-bold">PRIMERA.- OBJETO.</span> &quot;El Arrendador&quot; otorga el uso y goce temporal de <span className="font-bold">{formData.tipo_bien === "Mueble" ? "EL BIEN MUEBLE" : "EL BIEN INMUEBLE"}</span> al &quot;Arrendatario&quot;, quien lo recibe para {formData.tipo_bien === "Inmueble" ? (<>fines exclusivos de <span className="font-bold"><InlineInput value={formData.uso_destinado || ''} onChange={handleChange('uso_destinado')} placeholder="CASA HABITACIÓN" widthClass=""/></span></>) : "los fines lícitos que convengan a sus intereses, comprometiéndose a darle el uso adecuado a su naturaleza"}.</p>
             </div>
             
             <div>
-                <p><span className="font-bold">SEGUNDA.- VIGENCIA.</span> El presente contrato tendrá una duración forzosa de <span className="font-bold"><InlineInput value={formData.duracion || ''} onChange={handleChange('duracion')} placeholder="12 meses" widthClass="w-32"/></span>, iniciando el <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span> y terminando el <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass="w-48"/></span>. Si el arrendatario desea renovar, deberá notificarlo por escrito con 30 días naturales de anticipación.</p>
+                <p><span className="font-bold">SEGUNDA.- VIGENCIA.</span> El presente contrato tendrá una duración forzosa de <span className="font-bold"><InlineInput value={formData.duracion || ''} onChange={handleChange('duracion')} placeholder="12 meses" widthClass=""/></span>, iniciando el <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass=""/></span> y terminando el <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass=""/></span>. Si el arrendatario desea renovar, deberá notificarlo por escrito con 30 días naturales de anticipación.</p>
             </div>
 
             <div>
@@ -89,11 +89,11 @@ export const BloqueClausulasArrendamiento = () => {
             </div>
             
             <div>
-                <p><span className="font-bold">CUARTA.- RENTA.</span> El arrendatario pagará al arrendador por concepto de renta mensual la cantidad de <span className="font-bold">${<InlineInput value={formData.valor_operacion || ''} onChange={handleValorChange} placeholder="0.00" widthClass="w-32" type="number"/>} (<InlineInput value={formData.valor_en_letras || ''} onChange={handleChange('valor_en_letras')} placeholder="Cero pesos 00/100 M.N." widthClass="w-96"/>)</span>. El pago deberá realizarse por adelantado, en las <span className="font-bold"><InlineInput value={formData.fechas_pago || ''} onChange={handleChange('fechas_pago')} placeholder="fechas establecidas" widthClass="w-48"/></span>, mediante <span className="font-bold"><InlineInput value={formData.forma_pago || ''} onChange={handleChange('forma_pago')} placeholder="transferencia bancaria" widthClass="w-48"/>: <InlineInput value={formData.lugar_pago || ''} onChange={handleChange('lugar_pago')} placeholder="lugar de pago" widthClass="w-48"/></span>.</p>
+                <p><span className="font-bold">CUARTA.- RENTA.</span> El arrendatario pagará al arrendador por concepto de renta mensual la cantidad de <span className="font-bold">${<InlineInput value={formData.valor_operacion || ''} onChange={handleValorChange} placeholder="0.00" widthClass="" type="number"/>} (<InlineInput value={formData.valor_en_letras || ''} onChange={handleChange('valor_en_letras')} placeholder="Cero pesos 00/100 M.N." widthClass=""/>)</span>. El pago deberá realizarse por adelantado, en las <span className="font-bold"><InlineInput value={formData.fechas_pago || ''} onChange={handleChange('fechas_pago')} placeholder="fechas establecidas" widthClass=""/></span>, mediante <span className="font-bold"><InlineInput value={formData.forma_pago || ''} onChange={handleChange('forma_pago')} placeholder="transferencia bancaria" widthClass=""/>: <InlineInput value={formData.lugar_pago || ''} onChange={handleChange('lugar_pago')} placeholder="lugar de pago" widthClass=""/></span>.</p>
             </div>
             
             <div>
-                <p><span className="font-bold">QUINTA.- DEPÓSITO EN GARANTÍA.</span> A la firma del contrato, &quot;El Arrendatario&quot; entrega a &quot;El Arrendador&quot; el equivalente a <span className="font-bold"><InlineInput value={formData.deposito_garantia || ''} onChange={handleChange('deposito_garantia')} placeholder="1" widthClass="w-16" type="number"/></span> mes(es) de renta como depósito en garantía. Este depósito no se aplicará al pago de rentas y será devuelto dentro de los 45 días naturales posteriores a la devolución del bien, una vez liquidados los adeudos o reparaciones por mal uso.</p>
+                <p><span className="font-bold">QUINTA.- DEPÓSITO EN GARANTÍA.</span> A la firma del contrato, &quot;El Arrendatario&quot; entrega a &quot;El Arrendador&quot; el equivalente a <span className="font-bold"><InlineInput value={formData.deposito_garantia || ''} onChange={handleChange('deposito_garantia')} placeholder="1" widthClass="" type="number"/></span> mes(es) de renta como depósito en garantía. Este depósito no se aplicará al pago de rentas y será devuelto dentro de los 45 días naturales posteriores a la devolución del bien, una vez liquidados los adeudos o reparaciones por mal uso.</p>
             </div>
 
             <div>
@@ -106,8 +106,8 @@ export const BloqueClausulasArrendamiento = () => {
 
             <div>
                 <p><span className="font-bold">OCTAVA.- PENA CONVENCIONAL.</span></p>
-                <p>a) Por terminación anticipada: <span className="font-bold"><InlineInput value={formData.multa_terminacion_anticipada || ''} onChange={handleChange('multa_terminacion_anticipada')} placeholder="20%" widthClass="w-16"/>%</span> del total de las rentas restantes.</p>
-                <p>b) Por falta de pago oportuno: Se generará un interés moratorio del <span className="font-bold"><InlineInput value={formData.interes_moratorio_diario || '1'} onChange={handleChange('interes_moratorio_diario')} placeholder="1" widthClass="w-16" type="number"/>%</span> diario sobre el monto de la renta no pagada.</p>
+                <p>a) Por terminación anticipada: <span className="font-bold"><InlineInput value={formData.multa_terminacion_anticipada || ''} onChange={handleChange('multa_terminacion_anticipada')} placeholder="20%" widthClass=""/>%</span> del total de las rentas restantes.</p>
+                <p>b) Por falta de pago oportuno: Se generará un interés moratorio del <span className="font-bold"><InlineInput value={formData.interes_moratorio_diario || '1'} onChange={handleChange('interes_moratorio_diario')} placeholder="1" widthClass="" type="number"/>%</span> diario sobre el monto de la renta no pagada.</p>
                 
             </div>
 
@@ -166,7 +166,7 @@ export const BloqueClausulasArrendamiento = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">DÉCIMA CUARTA.- JURISDICCIÓN.</span> Para la interpretación y cumplimiento de este contrato, las partes se someten a la legislación aplicable y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Querétaro, Querétaro" widthClass="w-64"/></span>.</p>
+                <p><span className="font-bold">DÉCIMA CUARTA.- JURISDICCIÓN.</span> Para la interpretación y cumplimiento de este contrato, las partes se someten a la legislación aplicable y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Querétaro, Querétaro" widthClass=""/></span>.</p>
             </div>
 
             {formData.clausulas_adicionales && (

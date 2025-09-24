@@ -8,6 +8,7 @@ import {
     Handshake,
     ShieldCheck,
     UserCheck,
+    Briefcase,
 } from "lucide-react"
 import Link from "next/link"
 import { useContratoStore } from "../store/useContratoStore"
@@ -50,6 +51,13 @@ const contractTypes = [
         type: "confidencialidad",
         icon: ShieldCheck,
         description: "Protege la información sensible entre partes.",
+    },
+    {
+        label: "Laboral",
+        value: "laboral",
+        type: "laboral",
+        icon: Briefcase,
+        description: "Contrato individual de trabajo empleador-trabajador.",
     },
     {
         label: "Otro",

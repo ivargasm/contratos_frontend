@@ -205,3 +205,18 @@ export async function updateContract(
 
     return await response.json(); // { id, message, download_url }
 }
+
+export async function changePassword(url: string, currentPassword: string, newPassword: string) {
+    const res = await fetch(`${url}/auth/change-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    });
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.detail || 'Error al cambiar la contraseña');
+    }
+    return res;
+}
