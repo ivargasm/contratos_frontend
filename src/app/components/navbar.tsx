@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
-import { Menu, X, Home, Folder, LogOut, LogIn, Sun, Moon, File } from "lucide-react";
+import { Menu, X, Home, Folder, LogOut, LogIn, Sun, Moon, File, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "../store/Store";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,11 @@ export default function Navbar() {
                             <File size={20} /> Contratos
                         </Link>
                     </li>
+                    <li>
+                        <Link href="/docs" className="flex items-center gap-2 hover:text-primary">
+                            <BookOpen size={20} /> Documentación
+                        </Link>
+                    </li>
                     {/* si is Autenticates is Treu mostrar menu dashboard */}
                     {userAuth && (
                         <>
@@ -107,6 +112,11 @@ export default function Navbar() {
                         <li>
                             <Link href="/contract-selector" className="flex items-center gap-2 text-slate-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                 <File size={20} /> Contratos
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/docs" className="flex items-center gap-2 text-slate-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                <BookOpen size={20} /> Documentación
                             </Link>
                         </li>
                         {userAuth && (
