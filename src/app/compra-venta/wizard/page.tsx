@@ -15,7 +15,7 @@ import {
 import { InlineSelectWithChildren } from '@/app/components/ui/InlineComponents';
 import { useContratoStore } from '@/app/store/useContratoStore';
 
-export default function ContratoCompraVentaInteractivo({ params }: { params: { contract_type: string } }) {
+function ContratoCompraVentaClient({ contractType }: { contractType: string }) {
     const { contratoActual, updateContratoFormData } = useContratoStore();
 
     const handleSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -24,7 +24,7 @@ export default function ContratoCompraVentaInteractivo({ params }: { params: { c
 
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'compra-venta'}
+            contractType={contractType}
             title="Contrato de Compra-Venta"
             rolPropietario="EL VENDEDOR"
             rolInteresado="EL COMPRADOR"
@@ -72,4 +72,8 @@ export default function ContratoCompraVentaInteractivo({ params }: { params: { c
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function ContratoCompraVentaInteractivo({ params }: { params: { contract_type: string } }) {
+    return <ContratoCompraVentaClient contractType={params.contract_type || 'compra-venta'} />;
+}

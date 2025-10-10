@@ -14,10 +14,10 @@ import {
     BloqueClausulasConfidencialidad
 } from '@/app/components/wizard/BloquesConfidencialidad';
 
-export default function AcuerdoConfidencialidadInteractivo({ params }: { params: { contract_type: string } }) {
+function AcuerdoConfidencialidadClient({ contractType }: { contractType: string }) {
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'confidencialidad'}
+            contractType={contractType}
             title="Acuerdo de Confidencialidad"
             rolPropietario="PARTE DIVULGADORA"
             rolInteresado="PARTE RECEPTORA"
@@ -55,4 +55,8 @@ export default function AcuerdoConfidencialidadInteractivo({ params }: { params:
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function AcuerdoConfidencialidadInteractivo({ params }: { params: { contract_type: string } }) {
+    return <AcuerdoConfidencialidadClient contractType={params.contract_type || 'confidencialidad'} />;
+}

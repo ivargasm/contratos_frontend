@@ -13,10 +13,10 @@ import {
     BloqueClausulasPrestacionServicios
 } from '@/app/components/wizard/BloquesPrestacionServicios';
 
-export default function ContratoPrestacionServiciosInteractivo({ params }: { params: { contract_type: string } }) {
+function ContratoPrestacionServiciosClient({ contractType }: { contractType: string }) {
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'servicios'}
+            contractType={contractType}
             title="Contrato de Prestación de Servicios Profesionales"
             rolPropietario="PRESTADOR"
             rolInteresado="CLIENTE"
@@ -49,4 +49,8 @@ export default function ContratoPrestacionServiciosInteractivo({ params }: { par
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function ContratoPrestacionServiciosInteractivo({ params }: { params: { contract_type: string } }) {
+    return <ContratoPrestacionServiciosClient contractType={params.contract_type || 'servicios'} />;
+}

@@ -13,10 +13,10 @@ import {
     BloqueClausulasLaboral
 } from '@/app/components/wizard/BloquesLaboral';
 
-export default function ContratoLaboralInteractivo({ params }: { params: { contract_type: string } }) {
+function ContratoLaboralClient({ contractType }: { contractType: string }) {
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'laboral'}
+            contractType={contractType}
             title="Contrato Individual de Trabajo"
             rolPropietario="EL PATRÓN"
             rolInteresado="EL TRABAJADOR"
@@ -48,4 +48,8 @@ export default function ContratoLaboralInteractivo({ params }: { params: { contr
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function ContratoLaboralInteractivo({ params }: { params: { contract_type: string } }) {
+    return <ContratoLaboralClient contractType={params.contract_type || 'laboral'} />;
+}

@@ -15,7 +15,7 @@ import {
 import { InlineSelectWithChildren } from '@/app/components/ui/InlineComponents';
 import { useContratoStore } from '@/app/store/useContratoStore';
 
-export default function ContratoArrendamientoInteractivo({ params }: { params: { contract_type: string } }) {
+function ContratoArrendamientoClient({ contractType }: { contractType: string }) {
     const { contratoActual, updateContratoFormData } = useContratoStore();
 
     const handleSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -29,7 +29,7 @@ export default function ContratoArrendamientoInteractivo({ params }: { params: {
 
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'arrendamiento'}
+            contractType={contractType}
             title={getTitle()}
             rolPropietario="ARRENDADOR"
             rolInteresado="ARRENDATARIO"
@@ -77,4 +77,8 @@ export default function ContratoArrendamientoInteractivo({ params }: { params: {
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function ContratoArrendamientoInteractivo({ params }: { params: { contract_type: string } }) {
+    return <ContratoArrendamientoClient contractType={params.contract_type || 'arrendamiento'} />;
+}

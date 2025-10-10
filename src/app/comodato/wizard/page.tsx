@@ -15,7 +15,7 @@ import {
 import { InlineSelectWithChildren } from '@/app/components/ui/InlineComponents';
 import { useContratoStore } from '@/app/store/useContratoStore';
 
-export default function ContratoComodatoInteractivo({ params }: { params: { contract_type: string } }) {
+function ContratoComodatoClient({ contractType }: { contractType: string }) {
     const { contratoActual, updateContratoFormData } = useContratoStore();
 
     const handleSelectChange = (key: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -29,7 +29,7 @@ export default function ContratoComodatoInteractivo({ params }: { params: { cont
 
     return (
         <ContractWizardTemplate
-            contractType={params.contract_type || 'comodato'}
+            contractType={contractType}
             title={getTitle()}
             rolPropietario="COMODANTE"
             rolInteresado="COMODATARIO"
@@ -77,4 +77,8 @@ export default function ContratoComodatoInteractivo({ params }: { params: { cont
             </section>
         </ContractWizardTemplate>
     );
-};
+}
+
+export default function ContratoComodatoInteractivo({ params }: { params: { contract_type: string } }) {
+    return <ContratoComodatoClient contractType={params.contract_type || 'comodato'} />;
+}
