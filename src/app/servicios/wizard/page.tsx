@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { ContractWizardTemplate } from '@/app/components/wizard/ContractWizardTemplate';
 import { 
     BloqueLugarFecha, 
@@ -51,6 +51,7 @@ function ContratoPrestacionServiciosClient({ contractType }: { contractType: str
     );
 }
 
-export default function ContratoPrestacionServiciosInteractivo({ params }: { params: { contract_type: string } }) {
-    return <ContratoPrestacionServiciosClient contractType={params.contract_type || 'servicios'} />;
+export default function ContratoPrestacionServiciosInteractivo({ params }: { params: Promise<{ contract_type: string }> }) {
+    const resolvedParams = use(params);
+    return <ContratoPrestacionServiciosClient contractType={resolvedParams.contract_type || 'servicios'} />;
 }

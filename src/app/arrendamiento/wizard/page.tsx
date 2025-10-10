@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { ContractWizardTemplate } from '@/app/components/wizard/ContractWizardTemplate';
 import { 
     BloqueLugarFecha, 
@@ -79,6 +79,7 @@ function ContratoArrendamientoClient({ contractType }: { contractType: string })
     );
 }
 
-export default function ContratoArrendamientoInteractivo({ params }: { params: { contract_type: string } }) {
-    return <ContratoArrendamientoClient contractType={params.contract_type || 'arrendamiento'} />;
+export default function ContratoArrendamientoInteractivo({ params }: { params: Promise<{ contract_type: string }> }) {
+    const resolvedParams = use(params);
+    return <ContratoArrendamientoClient contractType={resolvedParams.contract_type || 'arrendamiento'} />;
 }

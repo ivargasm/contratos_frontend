@@ -15,9 +15,9 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     userAuth: false,
-    // url: 'http://localhost:8000',
+    url: 'http://localhost:8000',
     // url: 'https://contratos-backend-hjag.onrender.com',
-    url: 'https://api.easycontract.com.mx',
+    // url: 'https://api.easycontract.com.mx',
     setUser: (user) => set({ user }),
     loginUser: async (email, password) => {
         const data = await login(email, password, useAuthStore.getState().url);

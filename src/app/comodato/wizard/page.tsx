@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { ContractWizardTemplate } from '@/app/components/wizard/ContractWizardTemplate';
 import { 
     BloqueLugarFecha, 
@@ -79,6 +79,7 @@ function ContratoComodatoClient({ contractType }: { contractType: string }) {
     );
 }
 
-export default function ContratoComodatoInteractivo({ params }: { params: { contract_type: string } }) {
-    return <ContratoComodatoClient contractType={params.contract_type || 'comodato'} />;
+export default function ContratoComodatoInteractivo({ params }: { params: Promise<{ contract_type: string }> }) {
+    const resolvedParams = use(params);
+    return <ContratoComodatoClient contractType={resolvedParams.contract_type || 'comodato'} />;
 }

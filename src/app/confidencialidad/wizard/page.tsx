@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { use } from 'react';
 import { ContractWizardTemplate } from '@/app/components/wizard/ContractWizardTemplate';
 import { 
     BloqueLugarFecha, 
@@ -57,6 +57,7 @@ function AcuerdoConfidencialidadClient({ contractType }: { contractType: string 
     );
 }
 
-export default function AcuerdoConfidencialidadInteractivo({ params }: { params: { contract_type: string } }) {
-    return <AcuerdoConfidencialidadClient contractType={params.contract_type || 'confidencialidad'} />;
+export default function AcuerdoConfidencialidadInteractivo({ params }: { params: Promise<{ contract_type: string }> }) {
+    const resolvedParams = use(params);
+    return <AcuerdoConfidencialidadClient contractType={resolvedParams.contract_type || 'confidencialidad'} />;
 }
