@@ -6,9 +6,9 @@ import { InlineInput, InlineTextArea } from '@/app/components/ui/InlineComponent
 // BLOQUE ESPECÍFICO: DECLARACIONES DE COMPRA-VENTA
 // ------------------------------------------------------------------
 export const BloqueDeclaracionesCompraVenta = () => {
-    const { formData, updateFormData } = useContratoStore();
+    const { contratoActual, updateContratoFormData } = useContratoStore();
     const handleChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
 
     return (
@@ -16,11 +16,11 @@ export const BloqueDeclaracionesCompraVenta = () => {
             <div>
                 <h3 className="font-bold text-xl mb-3">I.- Declara &quot;El Vendedor&quot;:</h3>
                 <p className="ml-4">A) Ser persona física/moral, mayor de edad, con plena capacidad jurídica para celebrar el presente acto.</p>
-                {formData.tipo_bien === "Mueble" ? (
+                {(typeof contratoActual?.form_data?.tipo_bien === 'string' ? contratoActual.form_data.tipo_bien : '') === "Mueble" ? (
                     <>
                         <p className="ml-4">
                             B) Ser el único y legítimo propietario del bien mueble que se describe a continuación:{' '}
-                            <InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="Marca, modelo, serie, etc." widthClass=""/>, 
+                            <InlineInput value={typeof contratoActual?.form_data?.descripcion_bien === 'string' ? contratoActual.form_data.descripcion_bien : ''} onChange={handleChange('descripcion_bien')} placeholder="Marca, modelo, serie, etc." widthClass="" disabled={contratoActual?.status === 'finalizado'}/>, 
                             al que en lo sucesivo se le denominará **&quot;EL BIEN&quot;**.
                         </p>
                         <p className="ml-4">
@@ -31,11 +31,11 @@ export const BloqueDeclaracionesCompraVenta = () => {
                     <>
                         <p className="ml-4">
                             B) Ser el único y legítimo propietario del bien inmueble ubicado en{' '}
-                            <InlineInput value={formData.direccion_entrega || ''} onChange={handleChange('direccion_entrega')} placeholder="Dirección completa del inmueble" widthClass=""/>, 
+                            <InlineInput value={typeof contratoActual?.form_data?.direccion_entrega === 'string' ? contratoActual.form_data.direccion_entrega : ''} onChange={handleChange('direccion_entrega')} placeholder="Dirección completa del inmueble" widthClass="" disabled={contratoActual?.status === 'finalizado'}/>, 
                             con folio real/escritura pública número 
-                            <InlineInput value={formData.folio_real || ''} onChange={handleChange('folio_real')} placeholder="Folio real o número de escritura" widthClass=""/>, 
+                            <InlineInput value={typeof contratoActual?.form_data?.folio_real === 'string' ? contratoActual.form_data.folio_real : ''} onChange={handleChange('folio_real')} placeholder="Folio real o número de escritura" widthClass="" disabled={contratoActual?.status === 'finalizado'}/>, 
                             inscrito en el Registro Público de la Propiedad bajo el número 
-                            <InlineInput value={formData.registro_publico || ''} onChange={handleChange('registro_publico')} placeholder="Número de registro" widthClass=""/>, 
+                            <InlineInput value={typeof contratoActual?.form_data?.registro_publico === 'string' ? contratoActual.form_data.registro_publico : ''} onChange={handleChange('registro_publico')} placeholder="Número de registro" widthClass="" disabled={contratoActual?.status === 'finalizado'}/>, 
                             al que en lo sucesivo se le denominará **&quot;EL BIEN&quot;**.
                         </p>
                         <p className="ml-4">
@@ -63,25 +63,25 @@ export const BloqueDeclaracionesCompraVenta = () => {
 // BLOQUE ESPECÍFICO: CLÁUSULAS DE COMPRA-VENTA
 // ------------------------------------------------------------------
 export const BloqueClausulasCompraVenta = () => {
-    const { formData, updateFormData } = useContratoStore();
+    const { contratoActual, updateContratoFormData } = useContratoStore();
     
     const handleChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
     
     const handleTextAreaChange = (key: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
     
     const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const valor = e.target.value;
-        updateFormData('valor_operacion', valor);
+        updateContratoFormData('valor_operacion', valor);
         
         // Auto-generar valor en letras
         if (valor && !isNaN(parseFloat(valor))) {
             import('@/app/lib/numberToWords').then(({ formatearValorEnLetras }) => {
                 const valorEnLetras = formatearValorEnLetras(valor, 'MXN');
-                updateFormData('valor_en_letras', valorEnLetras);
+                updateContratoFormData('valor_en_letras', valorEnLetras);
             });
         }
     };
@@ -90,17 +90,17 @@ export const BloqueClausulasCompraVenta = () => {
         <div className="space-y-6 text-lg leading-relaxed">
             <div>
                 <p><span className="font-bold">PRIMERA.- OBJETO.</span> &quot;EL VENDEDOR&quot; vende y transfiere a &quot;EL COMPRADOR&quot;, quien adquiere para sí, <span className="font-bold">EL BIEN</span> descrito:</p>
-                <p><span className="font-bold">Descripción del bien:</span> <InlineInput value={formData.descripcion_bien || ''} onChange={handleChange('descripcion_bien')} placeholder="Automovi, Casa, Departamento" widthClass=""/></p>
-                <p><span className="font-bold">Estado del bien:</span> <InlineInput value={formData.estado_bien || ''} onChange={handleChange('estado_bien')} placeholder="Nuevo, Usado, etc." widthClass=""/></p>
+                <p><span className="font-bold">Descripción del bien:</span> <InlineInput value={typeof contratoActual?.form_data?.descripcion_bien === 'string' ? contratoActual.form_data.descripcion_bien : ''} onChange={handleChange('descripcion_bien')} placeholder="Automovi, Casa, Departamento" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></p>
+                <p><span className="font-bold">Estado del bien:</span> <InlineInput value={typeof contratoActual?.form_data?.estado_bien === 'string' ? contratoActual.form_data.estado_bien : ''} onChange={handleChange('estado_bien')} placeholder="Nuevo, Usado, etc." widthClass="" disabled={contratoActual?.status === 'finalizado'}/></p>
                 <p>EL COMPRADOR acepta adquirir dicho bien en las condiciones pactadas en el presente contrato.</p>
             </div>
             
             <div>
-                <p><span className="font-bold">SEGUNDA.- PRECIO Y FORMA DE PAGO.</span> El precio total de la presente operación es la cantidad de <span className="font-bold">${<InlineInput value={formData.valor_operacion || ''} onChange={handleValorChange} placeholder="0.00" widthClass="" type="number"/>} (<InlineInput value={formData.valor_en_letras || ''} onChange={handleChange('valor_en_letras')} placeholder="Cero pesos 00/100 M.N." widthClass=""/>)</span>.</p>
+                <p><span className="font-bold">SEGUNDA.- PRECIO Y FORMA DE PAGO.</span> El precio total de la presente operación es la cantidad de <span className="font-bold">${<InlineInput value={typeof contratoActual?.form_data?.valor_operacion === 'string' ? contratoActual.form_data.valor_operacion : ''} onChange={handleValorChange} placeholder="0.00" widthClass="" type="number" disabled={contratoActual?.status === 'finalizado'}/>} (<InlineInput value={typeof contratoActual?.form_data?.valor_en_letras === 'string' ? contratoActual.form_data.valor_en_letras : ''} onChange={handleChange('valor_en_letras')} placeholder="Cero pesos 00/100 M.N." widthClass="" disabled={contratoActual?.status === 'finalizado'}/>)</span>.</p>
                 <p>EL COMPRADOR se obliga a pagar dicho precio de la siguiente forma:</p>
-                <p><span className="font-bold">Forma de pago:</span> <InlineInput value={formData.forma_pago || ''} onChange={handleChange('forma_pago')} placeholder="________________" widthClass=""/></p>
-                <p><span className="font-bold">Fecha(s) de pago:</span> <InlineInput value={formData.fechas_pago || ''} onChange={handleChange('fechas_pago')} placeholder="________________" widthClass=""/></p>
-                <p><span className="font-bold">Lugar de pago:</span> <InlineInput value={formData.lugar_pago || ''} onChange={handleChange('lugar_pago')} placeholder="________________" widthClass=""/></p>
+                <p><span className="font-bold">Forma de pago:</span> <InlineInput value={typeof contratoActual?.form_data?.forma_pago === 'string' ? contratoActual.form_data.forma_pago : ''} onChange={handleChange('forma_pago')} placeholder="________________" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></p>
+                <p><span className="font-bold">Fecha(s) de pago:</span> <InlineInput value={typeof contratoActual?.form_data?.fechas_pago === 'string' ? contratoActual.form_data.fechas_pago : ''} onChange={handleChange('fechas_pago')} placeholder="________________" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></p>
+                <p><span className="font-bold">Lugar de pago:</span> <InlineInput value={typeof contratoActual?.form_data?.lugar_pago === 'string' ? contratoActual.form_data.lugar_pago : ''} onChange={handleChange('lugar_pago')} placeholder="________________" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></p>
             </div>
             
             <div>
@@ -116,26 +116,26 @@ export const BloqueClausulasCompraVenta = () => {
             </div>
             
             <div>
-                <p><span className="font-bold">SEXTA.- PENA CONVENCIONAL.</span> En caso de incumplimiento de cualquiera de las obligaciones estipuladas en este contrato por alguna de las partes, la parte infractora se hará acreedora a una pena convencional equivalente al <span className="font-bold"><InlineInput value={formData.pena_porcentaje || ''} onChange={handleChange('pena_porcentaje')} placeholder="20" widthClass="" type="number"/>%</span> del valor total de la operación, sin perjuicio de que la parte afectada pueda exigir el cumplimiento forzoso del contrato o su rescisión.</p>
+                <p><span className="font-bold">SEXTA.- PENA CONVENCIONAL.</span> En caso de incumplimiento de cualquiera de las obligaciones estipuladas en este contrato por alguna de las partes, la parte infractora se hará acreedora a una pena convencional equivalente al <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.pena_porcentaje === 'string' ? contratoActual.form_data.pena_porcentaje : ''} onChange={handleChange('pena_porcentaje')} placeholder="20" widthClass="" type="number" disabled={contratoActual?.status === 'finalizado'}/>%</span> del valor total de la operación, sin perjuicio de que la parte afectada pueda exigir el cumplimiento forzoso del contrato o su rescisión.</p>
             </div>
             
             <div>
                 <p><span className="font-bold">SÉPTIMA.- RESCISIÓN.</span> Serán causas de rescisión del presente contrato, imputables a &quot;EL COMPRADOR&quot;, el incumplimiento en el pago del precio; y será causa de rescisión imputable a &quot;EL VENDEDOR&quot;, la no entrega de <span className="font-bold">EL BIEN</span> en la fecha pactada, o si <span className="font-bold">EL BIEN</span> presentara gravámenes o limitaciones de dominio no declarados.</p>
-                {formData.clausula_resolucion_adicional && (
+                {(typeof contratoActual?.form_data?.clausula_resolucion_adicional === 'string' ? contratoActual.form_data.clausula_resolucion_adicional : '') && (
                     <div className="mt-2">
                         <p className="font-bold">Causas adicionales de rescisión:</p>
                         <ul className="list-disc ml-6">
-                            {formData.clausula_resolucion_adicional.split('\n').map((item, index) => (
+                            {(typeof contratoActual?.form_data?.clausula_resolucion_adicional === 'string' ? contratoActual.form_data.clausula_resolucion_adicional : '').split('\n').map((item: string, index: number) => (
                                 item.trim() && <li key={index}>{item.trim()}</li>
                             ))}
                         </ul>
                     </div>
                 )}
-                <InlineTextArea value={formData.clausula_resolucion_adicional || ''} onChange={handleTextAreaChange('clausula_resolucion_adicional')} placeholder="Agregar causas adicionales de rescisión (una por línea)" rows={3}/>
+                <InlineTextArea value={typeof contratoActual?.form_data?.clausula_resolucion_adicional === 'string' ? contratoActual.form_data.clausula_resolucion_adicional : ''} onChange={handleTextAreaChange('clausula_resolucion_adicional')} placeholder="Agregar causas adicionales de rescisión (una por línea)" rows={3}/>
             </div>
             
             <div>
-                <p><span className="font-bold">OCTAVA.- GASTOS Y HONORARIOS.</span> Todos los gastos, impuestos, derechos y honorarios que se generen con motivo de la escrituración y/o registro de la presente compraventa, serán cubiertos en su totalidad por <span className="font-bold"><InlineInput value={formData.quien_paga_gastos || 'El Comprador'} onChange={handleChange('quien_paga_gastos')} placeholder='"EL COMPRADOR"' widthClass=""/></span>, salvo pacto en contrario.</p>
+                <p><span className="font-bold">OCTAVA.- GASTOS Y HONORARIOS.</span> Todos los gastos, impuestos, derechos y honorarios que se generen con motivo de la escrituración y/o registro de la presente compraventa, serán cubiertos en su totalidad por <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.quien_paga_gastos === 'string' ? contratoActual.form_data.quien_paga_gastos : 'El Comprador'} onChange={handleChange('quien_paga_gastos')} placeholder='"EL COMPRADOR"' widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span>, salvo pacto en contrario.</p>
             </div>
             
             <div>
@@ -147,21 +147,21 @@ export const BloqueClausulasCompraVenta = () => {
             </div>
             
             <div>
-                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para todo lo relacionado con la interpretación y cumplimiento de este contrato, las partes se someten a las leyes aplicables y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass=""/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
+                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para todo lo relacionado con la interpretación y cumplimiento de este contrato, las partes se someten a las leyes aplicables y a la jurisdicción de los tribunales competentes de la ciudad de <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.ciudad_jurisdiccion === 'string' ? contratoActual.form_data.ciudad_jurisdiccion : ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
             </div>
             
             <div>
                 <p><span className="font-bold">DÉCIMA SEGUNDA.- GARANTÍAS</span></p>
                 <p>EL VENDEDOR garantiza que el bien objeto de este contrato está libre de todo gravamen, carga o limitación, y que tiene plena propiedad sobre el mismo para efectuar la presente venta.</p>
                 <p>En caso de vicios ocultos, EL VENDEDOR responderá según la legislación aplicable.</p>
-                {formData.garantias_adicionales && (
+                {(typeof contratoActual?.form_data?.garantias_adicionales === 'string' ? contratoActual.form_data.garantias_adicionales : '') && (
                     <ul className="list-disc ml-6 mt-2">
-                        {formData.garantias_adicionales.split('\n').map((item, index) => (
+                        {(typeof contratoActual?.form_data?.garantias_adicionales === 'string' ? contratoActual.form_data.garantias_adicionales : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))}
                     </ul>
                 )}
-                <InlineTextArea value={formData.garantias_adicionales || ''} onChange={handleTextAreaChange('garantias_adicionales')} placeholder="Agregar garantías adicionales (una por línea)" rows={3}/>
+                <InlineTextArea value={typeof contratoActual?.form_data?.garantias_adicionales === 'string' ? contratoActual.form_data.garantias_adicionales : ''} onChange={handleTextAreaChange('garantias_adicionales')} placeholder="Agregar garantías adicionales (una por línea)" rows={3}/>
             </div>
             
             <div>
@@ -170,13 +170,13 @@ export const BloqueClausulasCompraVenta = () => {
                     <li>Pagar el precio en los términos acordados.</li>
                     <li>Recibir el bien en la fecha y lugar establecidos.</li>
                     <li>Cubrir los gastos de transferencia o notariales si así se pactó.</li>
-                    {formData.obligaciones_interesado_adicionales && 
-                        formData.obligaciones_interesado_adicionales.split('\n').map((item, index) => (
+                    {(typeof contratoActual?.form_data?.obligaciones_interesado_adicionales === 'string' ? contratoActual.form_data.obligaciones_interesado_adicionales : '') && 
+                        (typeof contratoActual?.form_data?.obligaciones_interesado_adicionales === 'string' ? contratoActual.form_data.obligaciones_interesado_adicionales : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))
                     }
                 </ul>
-                <InlineTextArea value={formData.obligaciones_interesado_adicionales || ''} onChange={handleTextAreaChange('obligaciones_interesado_adicionales')} placeholder="Agregar obligaciones adicionales del comprador (una por línea)" rows={3}/>
+                <InlineTextArea value={typeof contratoActual?.form_data?.obligaciones_interesado_adicionales === 'string' ? contratoActual.form_data.obligaciones_interesado_adicionales : ''} onChange={handleTextAreaChange('obligaciones_interesado_adicionales')} placeholder="Agregar obligaciones adicionales del comprador (una por línea)" rows={3}/>
             </div>
             
             <div>
@@ -185,20 +185,20 @@ export const BloqueClausulasCompraVenta = () => {
                     <li>Entregar el bien en las condiciones pactadas.</li>
                     <li>Proporcionar toda la documentación necesaria (facturas, títulos, manuales, etc.).</li>
                     <li>Responder por la evicción y el saneamiento conforme a la ley.</li>
-                    {formData.obligaciones_propietario_adicionales && 
-                        formData.obligaciones_propietario_adicionales.split('\n').map((item, index) => (
+                    {(typeof contratoActual?.form_data?.obligaciones_propietario_adicionales === 'string' ? contratoActual.form_data.obligaciones_propietario_adicionales : '') && 
+                        (typeof contratoActual?.form_data?.obligaciones_propietario_adicionales === 'string' ? contratoActual.form_data.obligaciones_propietario_adicionales : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))
                     }
                 </ul>
-                <InlineTextArea value={formData.obligaciones_propietario_adicionales || ''} onChange={handleTextAreaChange('obligaciones_propietario_adicionales')} placeholder="Agregar obligaciones adicionales del vendedor (una por línea)" rows={3}/>
+                <InlineTextArea value={typeof contratoActual?.form_data?.obligaciones_propietario_adicionales === 'string' ? contratoActual.form_data.obligaciones_propietario_adicionales : ''} onChange={handleTextAreaChange('obligaciones_propietario_adicionales')} placeholder="Agregar obligaciones adicionales del vendedor (una por línea)" rows={3}/>
             </div>
             
-            {formData.clausulas_adicionales && (
+            {(typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : '') && (
                 <div>
                     <p><span className="font-bold">DÉCIMA QUINTA.- CLÁUSULAS ADICIONALES.</span></p>
                     <ul className="list-disc ml-6">
-                        {formData.clausulas_adicionales.split('\n').map((item, index) => (
+                        {(typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))}
                     </ul>
@@ -206,7 +206,7 @@ export const BloqueClausulasCompraVenta = () => {
             )}
             <div>
                 <p><span className="font-bold">Cláusulas Adicionales:</span></p>
-                <InlineTextArea value={formData.clausulas_adicionales || ''} onChange={handleTextAreaChange('clausulas_adicionales')} placeholder="Agregar cláusulas adicionales (una por línea)" rows={4}/>
+                <InlineTextArea value={typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : ''} onChange={handleTextAreaChange('clausulas_adicionales')} placeholder="Agregar cláusulas adicionales (una por línea)" rows={4}/>
             </div>
         </div>
     );

@@ -2,25 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useAuthStore } from "../store/Store";
-import { useContratoStore } from "../store/useContratoStore";
-import { createPaymentLink, getAvailableContracts, getContracts, getPresignedUrl, getEditableContract, changePassword } from "../lib/api";
+import { useContratoStore, ContratoCompleto } from "../store/useContratoStore";
+import { createPaymentLink, downloadContract, getContracts, getContractDetails, getAvailableContracts, changePassword } from "../lib/api";
 import ProtectedRoute from "../components/ProtectedRoutes";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-
-interface Contract {
-  id: number;
-  type: string;
-  data: Record<string, unknown>;
-  file_path: string;
-  created_at: string;
-}
 
 export default function ProfilePage() {
   const { user, logout, url } = useAuthStore();
-  const { setFormData, setTipoContrato, setContractId } = useContratoStore();
+  const { setContratoActual } = useContratoStore();
+  const [contracts, setContracts] = useState<ContratoCompleto[]>([]);
   const [activeTab, setActiveTab] = useState('profile');
-  const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [formDataProfile, setFormDataProfile] = useState({
     username: user?.username || '',
@@ -29,9 +21,24 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: ''
   });
+  const searchParams = useSearchParams();
 
   const [availableContracts, setAvailableContracts] = useState<number | null>(null);
   const router = useRouter();
+
+  // --- Efecto para mostrar mensaje de éxito tras el pago ---
+  useEffect(() => {
+      const paymentStatus = searchParams.get('payment_status');
+      if (paymentStatus === 'success') {
+          toast.success("¡Pago exitoso! Tu contrato se ha creado y aparecerá en la lista en breve.");
+          // Limpiamos la URL para no mostrar el mensaje de nuevo si el usuario recarga
+          router.replace('/profile', { scroll: false });
+      }
+      else if (paymentStatus === 'cancelled') {
+          toast.error("El pago fue cancelado. No se ha creado ningún contrato.");
+          router.replace('/profile', { scroll: false });
+      }
+  }, [searchParams, router]);
 
 
   // Simular carga de contratos
@@ -39,8 +46,8 @@ export default function ProfilePage() {
     const fetchContracts = async () => {
       try {
         const data = await getContracts(useAuthStore.getState().url);
-        const contractsData = Array.isArray(data) ? data : [];
-        setContracts(contractsData);
+        // const contractsData = Array.isArray(data) ? data : [];
+        setContracts(data);
 
         const available = await getAvailableContracts(useAuthStore.getState().url);
         setAvailableContracts(available);
@@ -53,6 +60,66 @@ export default function ProfilePage() {
 
     fetchContracts();
   }, []);
+
+  // NUEVO: Manejador para la edición desde el perfil
+  const handleEditContract = async (contractId: number, tipoContrato: string) => {
+    try {
+        toast.loading("Cargando borrador...");
+        // 1. Hacemos el fetch para obtener los datos COMPLETOS del contrato
+        const contractDetails = await getContractDetails(useAuthStore.getState().url, contractId);
+        
+        // 2. Guardamos el objeto completo en el store
+        setContratoActual(contractDetails);
+        
+        toast.dismiss();
+        toast.success("Borrador cargado, redirigiendo...");
+        
+        // 3. Navegamos a la página del wizard
+        router.push(`/${tipoContrato}/wizard`);
+
+    } catch (error) {
+        toast.dismiss();
+        toast.error((error as Error).message || "No se pudo cargar el contrato para editar.");
+        console.error("Error al obtener el contrato para editar:", error);
+    }
+  };
+
+  const handleNewVersion = async (contractId: number) => {
+        try {
+            toast.loading("Creando enlace de pago...");
+            const paymentUrl = await createPaymentLink(url, "new_version", contractId);
+            toast.dismiss();
+            window.location.href = paymentUrl; // Redirigir al usuario a Stripe
+        } catch {
+            toast.dismiss();
+            toast.error("No se pudo iniciar el proceso de pago.");
+        }
+    };
+
+    const handleDuplicate = async (contractId: number) => {
+        try {
+            toast.loading("Creando enlace de pago...");
+            const paymentUrl = await createPaymentLink(url, "duplicate", contractId);
+            toast.dismiss();
+            window.location.href = paymentUrl; // Redirigir al usuario a Stripe
+        } catch {
+            toast.dismiss();
+            toast.error("No se pudo iniciar el proceso de pago.");
+        }
+    };
+
+    const handleBuyNew = async () => {
+        try {
+            toast.loading("Creando enlace de pago...");
+            // Para un contrato nuevo, no necesitamos un ID de contrato original
+            const paymentUrl = await createPaymentLink(url, "new");
+            toast.dismiss();
+            window.location.href = paymentUrl;
+        } catch {
+            toast.dismiss();
+            toast.error("No se pudo iniciar el proceso de pago.");
+        }
+    };
 
 
   const validatePassword = (password: string) => {
@@ -84,26 +151,26 @@ export default function ProfilePage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validar que las contraseñas coincidan
     if (formDataProfile.newPassword !== formDataProfile.confirmPassword) {
       toast.error('Las contraseñas no coinciden');
       return;
     }
-    
+
     // Validar que la nueva contraseña no sea igual a la actual
     if (formDataProfile.currentPassword === formDataProfile.newPassword) {
       toast.error('La nueva contraseña debe ser diferente a la actual');
       return;
     }
-    
+
     // Validar requisitos de la nueva contraseña
     const passwordErrors = validatePassword(formDataProfile.newPassword);
     if (passwordErrors.length > 0) {
       toast.error(`La contraseña debe tener: ${passwordErrors.join(', ')}`);
       return;
     }
-    
+
     try {
       await changePassword(url, formDataProfile.currentPassword, formDataProfile.newPassword);
       toast.success('Contraseña actualizada correctamente');
@@ -115,17 +182,19 @@ export default function ProfilePage() {
 
   const handleDownloadContract = async (contractId: number) => {
     try {
-      const url = await getPresignedUrl(useAuthStore.getState().url, contractId);
-      if (url) {
-        window.open(url, '_blank');
-      }
+        // toast.loading("Preparando descarga...");
+        await downloadContract(url, contractId);
+        toast.dismiss();
+        toast.success("Descarga iniciada.");
     } catch (error) {
-      console.error('Error al descargar el contrato:', error);
+        toast.dismiss();
+        toast.error((error as Error).message);
+        console.error('Error al descargar el contrato:', error);
     }
   };
 
   // Función para formatear la fecha (ya no es necesaria, pero la dejamos por si acaso)
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
@@ -135,18 +204,7 @@ export default function ProfilePage() {
     });
   };
 
-  const handleEditContract = async (contractId: number) => {
-    try {
-      const { type, data } = await getEditableContract(url, contractId);
-      setTipoContrato(type);
-      setFormData(data);
-      setContractId(contractId);
-      router.push(`/${type}/wizard`);
-    } catch (error) {
-      console.error("Error al obtener el contrato para editar:", error);
-      alert("No se pudo cargar el contrato para editar. Verifica si aún está disponible.");
-    }
-  };
+  
 
   return (
     <ProtectedRoute>
@@ -241,15 +299,7 @@ export default function ProfilePage() {
                   <section>
                     <h2 className="text-xl font-semibold mb-4">Mis Contratos</h2>
                     <button
-                      onClick={async () => {
-                        try {
-                          const url = await createPaymentLink(useAuthStore.getState().url);
-                          window.location.href = url; // redirigir a Stripe
-                        } catch (error) {
-                          alert("Error al generar el enlace de pago");
-                          console.error(error);
-                        }
-                      }}
+                      onClick={() => handleBuyNew()}
                       className="inline-flex items-center px-4 py-2 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors mb-4 cursor-pointer"
                     >
                       Comprar contrato adicional
@@ -277,60 +327,79 @@ export default function ProfilePage() {
                         <p className="mt-1 text-sm text-muted-foreground">Comienza generando tu primer contrato.</p>
                       </div>
                     ) : (
-                      <div className="overflow-hidden border border-border rounded-lg">
-                        <table className="min-w-full divide-y divide-border">
+                      <div className="overflow-x-auto border border-border rounded-lg">
+                        <table className="w-full divide-y divide-border">
                           <thead className="bg-muted/50">
                             <tr>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                ID
+                              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                Contrato
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                                 Tipo
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Fecha
+                              <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                Estado
                               </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Archivo
-                              </th>
-                              <th scope="col" className="relative px-6 py-3">
-                                <span className="sr-only">Acciones</span>
+                              <th scope="col" className="px-8 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                Acciones
                               </th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-border">
+                          <tbody className="bg-background divide-y divide-border">
                             {contracts.map((contract) => (
                               <tr key={contract.id} className="hover:bg-muted/50 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">
-                                  {contract.id}
+                                <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-foreground">
+                                  {contract.form_data?.nombre_contrato 
+                                    ? `${contract.form_data.nombre_contrato} (v${contract.version})`
+                                    : contract.parent_id 
+                                      ? `${contract.parent_id} (v${contract.version})` 
+                                      : `${contract.id} (v${contract.version})`
+                                  }
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground capitalize">
-                                  {contract.type.replace('_', ' ')}
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-muted-foreground capitalize">
+                                  {contract.contract_type ? contract.contract_type.replace(/_/g, ' ') : 'No especificado'}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                                  {new Date(contract.created_at).toLocaleDateString('es-ES', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
+                                <td className="px-4 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                    contract.status === 'borrador' 
+                                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300' 
+                                      : 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
+                                  }`}>
+                                    {contract.status}
+                                  </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <button
-                                    onClick={() => handleEditContract(contract.id)}
-                                    className="text-primary hover:text-primary/80 cursor-pointer"
-                                  >
-                                    Editar
-                                  </button>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                  <button
-                                    onClick={() => handleDownloadContract(contract.id)}
-                                    className="text-primary hover:text-primary/80 cursor-pointer"
-                                  >
-                                    Descargar
-                                  </button>
+                                <td className="px-8 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <div className="flex justify-end space-x-3 pr-4">
+                                    {contract.status === 'borrador' ? (
+                                      <button
+                                        onClick={() => handleEditContract(contract.id, contract.contract_type)}
+                                        className="text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded hover:bg-primary/10 cursor-pointer"
+                                      >
+                                        Editar Borrador
+                                      </button>
+                                    ) : (
+                                      <>
+                                        <button
+                                          onClick={() => handleNewVersion(contract.id)}
+                                          className="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors px-2 py-1 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/20 cursor-pointer"
+                                        >
+                                          Crear Versión
+                                        </button>
+                                        <button
+                                          onClick={() => handleDuplicate(contract.id)}
+                                          className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-colors px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800/20 cursor-pointer"
+                                        >
+                                          Duplicar
+                                        </button>
+                                      </>
+                                    )}
+                                    <button
+                                      onClick={() => handleDownloadContract(contract.id)}
+                                      className="text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded hover:bg-primary/10 cursor-pointer"
+                                    >
+                                      Descargar
+                                    </button>
+                                  </div>
                                 </td>
                               </tr>
                             ))}
@@ -452,7 +521,7 @@ export default function ProfilePage() {
                                     </div>
                                     <div className={`flex items-center ${/[!@#$%^&*_(),.?":{}|<>\-+=\[\]~]/.test(formDataProfile.newPassword) ? 'text-green-600' : 'text-red-600'}`}>
                                       <span className="mr-1">{/[!@#$%^&*_(),.?":{}|<>\-+=\[\]~]/.test(formDataProfile.newPassword) ? '✓' : '✗'}</span>
-                                      Al menos un carácter especial (!@#$%^&*_(),.?&quot;:{}|&lt;&gt;-+=[]~)
+                                      Al menos un carácter especial (!@#$%^&*_(),.?&quot;:{ }|&lt;&gt;-+=[]~)
                                     </div>
                                   </div>
                                 )}

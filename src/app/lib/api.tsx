@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { ContratoCompleto } from "@/app/store/useContratoStore";
 
 export const fetchUser = async (url: string) => {
     const res = await fetch(`${url}/auth/me`, { credentials: 'include' });
@@ -72,8 +73,8 @@ export async function generatePurchaseSaleContract(url: string, type: string, da
         },
         credentials: "include", // importante si manejas sesión con cookies
         body: JSON.stringify({
-            type,
-            data: data,
+            contract_type: type,
+            form_data: data,
         }),
     });
 
@@ -119,28 +120,41 @@ export async function generateContractFromIA(url: string, type: string, message:
 }
 
 // obtener contratos generados por el usuario
-export async function getContracts(url: string) {
+export async function getContracts(url: string): Promise<ContratoCompleto[]> {
     const res = await fetch(`${url}/contracts/list`, {
-        method: "GET",
+        method: "GET", credentials: "include",
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Error al obtener contratos");
+    return await res.json();
+}
+
+// Generar enlace de pago
+export const createPaymentLink = async (
+    url: string,
+    operation_type: 'new' | 'duplicate' | 'new_version',
+    original_contract_id?: number
+) => {
+    const body: { operation_type: string; original_contract_id?: number } = {
+        operation_type,
+    };
+
+    if (original_contract_id) {
+        body.original_contract_id = original_contract_id;
+    }
+
+    const res = await fetch(`${url}/payments/create-payment-link`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
         credentials: "include",
+        body: JSON.stringify(body),
     });
 
     if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.detail || "Error al obtener contratos");
+        throw new Error(error.detail || "No se pudo generar el enlace de pago");
     }
-
-    return await res.json(); // { contracts: [...contratos] }
-}
-
-// Generar enlace de pago
-export const createPaymentLink = async (url: string) => {
-    const res = await fetch(`${url}/payments/create-payment-link`, {
-        method: "POST",
-        credentials: "include",
-    });
-
-    if (!res.ok) throw new Error("No se pudo generar el enlace de pago");
 
     const data = await res.json();
     return data.url;
@@ -169,41 +183,37 @@ export const getPresignedUrl = async (url: string, contract_id: number) => {
     }
 };
 
+/** @deprecated Reemplazada por getContractDetails, se mantiene por retrocompatibilidad */
 export async function getEditableContract(url: string, contractId: number) {
-    const response = await fetch(`${url}/contracts/editable/${contractId}`, {
-        method: "GET",
-        credentials: "include",
-    });
+    console.warn("ADVERTENCIA: 'getEditableContract' es una función obsoleta. Usar 'getContractDetails' en su lugar.");
+    // Llama a la nueva función
+    const fullContract = await getContractDetails(url, contractId);
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "Error al obtener el contrato editable");
-    }
-
-    return await response.json(); // { type, data }
+    // Devuelve el formato que el código antiguo espera
+    return {
+        type: fullContract.contract_type,
+        data: fullContract.form_data,
+    };
 }
 
 export async function updateContract(
     url: string,
     contractId: number,
-    type: string,
-    data: Record<string, string>
-) {
-    const response = await fetch(`${url}/contracts/contract-update/${contractId}`, {
+    contract_type: string,
+    form_data: Record<string, unknown>
+): Promise<ContratoCompleto> {
+    const response = await fetch(`${url}/contracts/${contractId}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ type, data }),
+        body: JSON.stringify({ contract_type, form_data }),
     });
 
     if (!response.ok) {
         const error = await response.json();
         throw new Error(error.detail || "Error al actualizar el contrato");
     }
-
-    return await response.json(); // { id, message, download_url }
+    return await response.json();
 }
 
 export async function changePassword(url: string, currentPassword: string, newPassword: string) {
@@ -219,4 +229,88 @@ export async function changePassword(url: string, currentPassword: string, newPa
         throw new Error(error.detail || 'Error al cambiar la contraseña');
     }
     return res;
+}
+
+// --- NUEVAS FUNCIONES DE API PARA VERSIONADO ---
+export async function getContractDetails(url: string, contractId: number): Promise<ContratoCompleto> {
+    const response = await fetch(`${url}/contracts/${contractId}`, {
+        method: "GET", credentials: "include"
+    });
+    if (!response.ok) throw new Error((await response.json()).detail || "Error al obtener detalles");
+    return await response.json();
+}
+
+export async function finalizeContract(url: string,contractId: number): Promise<ContratoCompleto> {
+    const response = await fetch(`${url}/contracts/${contractId}/finalize`, {
+        method: "POST", credentials: "include"
+    });
+    if (!response.ok) throw new Error((await response.json()).detail || "Error al finalizar");
+    return await response.json();
+}
+
+export async function createNewVersion(url: string,contractId: number): Promise<ContratoCompleto> {
+    const response = await fetch(`${url}/contracts/${contractId}/new-version`, {
+        method: "POST", credentials: "include"
+    });
+    if (!response.ok) throw new Error((await response.json()).detail || "Error al crear nueva versión");
+    return await response.json();
+}
+
+export async function duplicateContract(url: string,contractId: number): Promise<ContratoCompleto> {
+    const response = await fetch(`${url}/contracts/${contractId}/duplicate`, {
+        method: "POST", credentials: "include"
+    });
+    if (!response.ok) throw new Error((await response.json()).detail || "Error al duplicar");
+    return await response.json();
+}
+
+// --- NUEVA FUNCIÓN DE DESCARGA INTELIGENTE ---
+export async function downloadContract(url: string, contractId: number) {
+    const response = await fetch(`${url}/contracts/download/${contractId}`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Error al descargar el contrato");
+    }
+
+    // Verificamos el tipo de contenido para decidir cómo manejar la respuesta
+    const contentType = response.headers.get("content-type");
+
+    if (contentType && contentType.includes("application/json")) {
+        // Es un contrato FINALIZADO, el backend nos da una URL de S3
+        const data = await response.json();
+        if (data.download_url) {
+            window.open(data.download_url, '_blank');
+        } else {
+            throw new Error("No se recibió la URL de descarga.");
+        }
+    } else if (contentType && contentType.includes("application/pdf")) {
+        // Es un BORRADOR, el backend nos da el PDF directamente
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+
+        // Extraemos el nombre del archivo de los headers
+        const disposition = response.headers.get('content-disposition');
+        let filename = `borrador-contrato-${contractId}.pdf`; // Nombre por defecto
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+            const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            const matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) {
+                filename = matches[1].replace(/['"]/g, '');
+            }
+        }
+
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl); // Liberar memoria
+    } else {
+        throw new Error("Tipo de respuesta no soportado desde el servidor.");
+    }
 }

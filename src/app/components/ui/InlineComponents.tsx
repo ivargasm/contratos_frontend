@@ -7,6 +7,7 @@ interface InlineInputProps {
     placeholder: string;
     widthClass?: string;
     type?: 'text' | 'number';
+    disabled?: boolean;
 }
 
 export const InlineInput: React.FC<InlineInputProps> = ({ 
@@ -14,14 +15,16 @@ export const InlineInput: React.FC<InlineInputProps> = ({
     onChange, 
     placeholder, 
     widthClass = 'w-40', 
-    type = 'text' 
+    type = 'text',
+    disabled = false
 }) => (
     <input
         type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`inline-block bg-yellow-100 border-0 border-b border-border focus:ring-0 focus:border-primary focus:outline-none text-center font-medium text-primary px-1 ${widthClass}`}
+        disabled={disabled}
+        className={`inline-block bg-yellow-100 border-0 border-b border-border focus:ring-0 focus:border-primary focus:outline-none text-center font-medium text-primary px-1 ${widthClass} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     />
 );
 
@@ -61,18 +64,21 @@ interface InlineSelectWithChildrenProps {
     onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     children: React.ReactNode;
     widthClass?: string;
+    disabled?: boolean;
 }
 
 export const InlineSelectWithChildren: React.FC<InlineSelectWithChildrenProps> = ({ 
     value, 
     onChange, 
     children, 
-    widthClass = 'w-40' 
+    widthClass = 'w-40',
+    disabled = false
 }) => (
     <select 
         value={value} 
         onChange={onChange} 
-        className={`inline-block bg-yellow-100 border-0 border-b border-border focus:ring-0 focus:border-primary focus:outline-none text-center font-medium text-primary px-1 ${widthClass}`}
+        disabled={disabled}
+        className={`inline-block bg-yellow-100 border-0 border-b border-border focus:ring-0 focus:border-primary focus:outline-none text-center font-medium text-primary px-1 ${widthClass} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
         {children}
     </select>

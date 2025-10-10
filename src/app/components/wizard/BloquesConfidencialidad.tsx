@@ -6,9 +6,9 @@ import { InlineInput, InlineTextArea } from '@/app/components/ui/InlineComponent
 // BLOQUE ESPECÍFICO: ANTECEDENTES DE CONFIDENCIALIDAD
 // ------------------------------------------------------------------
 export const BloqueAntecedentesConfidencialidad = () => {
-    const { formData, updateFormData } = useContratoStore();
+    const { contratoActual, updateContratoFormData } = useContratoStore();
     const handleTextAreaChange = (key: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
 
     return (
@@ -19,7 +19,7 @@ export const BloqueAntecedentesConfidencialidad = () => {
             </p>
             <div className="bg-muted p-4 rounded-md mt-2">
                 <InlineTextArea 
-                    value={formData.proposito_acuerdo || ''} 
+                    value={typeof contratoActual?.form_data?.proposito_acuerdo === 'string' ? contratoActual.form_data.proposito_acuerdo : ''} 
                     onChange={handleTextAreaChange('proposito_acuerdo')} 
                     placeholder="[Describir el propósito, ej: una posible relación comercial, un proyecto de desarrollo, una inversión, etc.]" 
                     rows={3}
@@ -53,14 +53,14 @@ export const BloqueDeclaracionesConfidencialidad = () => {
 // BLOQUE ESPECÍFICO: CLÁUSULAS DE CONFIDENCIALIDAD
 // ------------------------------------------------------------------
 export const BloqueClausulasConfidencialidad = () => {
-    const { formData, updateFormData } = useContratoStore();
+    const { contratoActual, updateContratoFormData } = useContratoStore();
     
     const handleChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
     
     const handleTextAreaChange = (key: string) => (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateFormData(key, e.target.value);
+        updateContratoFormData(key, e.target.value);
     };
 
     return (
@@ -81,8 +81,8 @@ export const BloqueClausulasConfidencialidad = () => {
                     <li>Información financiera</li>
                     <li>Listas de clientes</li>
                     <li>Estrategias de marketing</li>
-                    {formData.categorias_informacion && 
-                        formData.categorias_informacion.split('\n').map((item, index) => (
+                    {(typeof contratoActual?.form_data?.categorias_informacion === 'string' ? contratoActual.form_data.categorias_informacion : '') && 
+                        (typeof contratoActual?.form_data?.categorias_informacion === 'string' ? contratoActual.form_data.categorias_informacion : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))
                     }
@@ -90,7 +90,7 @@ export const BloqueClausulasConfidencialidad = () => {
                 </ul>
                 <div className="mt-4">
                     <p className="font-bold mb-2">Categorías adicionales de información confidencial:</p>
-                    <InlineTextArea value={formData.categorias_informacion || ''} onChange={handleTextAreaChange('categorias_informacion')} placeholder="Agregar categorías específicas de información confidencial (una por línea)" rows={3}/>
+                    <InlineTextArea value={typeof contratoActual?.form_data?.categorias_informacion === 'string' ? contratoActual.form_data.categorias_informacion : ''} onChange={handleTextAreaChange('categorias_informacion')} placeholder="Agregar categorías específicas de información confidencial (una por línea)" rows={3}/>
                 </div>
             </div>
             
@@ -108,15 +108,15 @@ export const BloqueClausulasConfidencialidad = () => {
                     <li>Ya estaba en su posesión de forma legítima y sin restricciones de confidencialidad antes de recibirla de la &quot;Parte Divulgadora&quot;.</li>
                     <li>Fue desarrollada de forma independiente por la &quot;Parte Receptora&quot; sin acceso o referencia a la &quot;Información Confidencial&quot;.</li>
                     <li>Fue recibida legítimamente de un tercero sin obligación de confidencialidad.</li>
-                    {formData.excepciones && 
-                        formData.excepciones.split('\n').map((item, index) => (
+                    {(typeof contratoActual?.form_data?.excepciones === 'string' ? contratoActual.form_data.excepciones : '') && 
+                        (typeof contratoActual?.form_data?.excepciones === 'string' ? contratoActual.form_data.excepciones : '').split('\n').map((item: string, index: number) => (
                             item.trim() && <li key={index}>{item.trim()}</li>
                         ))
                     }
                 </ul>
                 <div className="mt-4">
                     <p className="font-bold mb-2">Excepciones adicionales:</p>
-                    <InlineTextArea value={formData.excepciones || ''} onChange={handleTextAreaChange('excepciones')} placeholder="Agregar excepciones específicas (una por línea)" rows={3}/>
+                    <InlineTextArea value={typeof contratoActual?.form_data?.excepciones === 'string' ? contratoActual.form_data.excepciones : ''} onChange={handleTextAreaChange('excepciones')} placeholder="Agregar excepciones específicas (una por línea)" rows={3}/>
                 </div>
             </div>
 
@@ -133,7 +133,7 @@ export const BloqueClausulasConfidencialidad = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">SÉPTIMA.- VIGENCIA Y TERMINACIÓN.</span> El presente Acuerdo entrará en vigor en la fecha de su firma y permanecerá vigente por un período de <span className="font-bold"><InlineInput value={formData.duracion || ''} onChange={handleChange('duracion')} placeholder="un (1) año" widthClass=""/></span> a partir del <span className="font-bold"><InlineInput value={formData.fecha_inicio || ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass=""/></span> y hasta el <span className="font-bold"><InlineInput value={formData.fecha_fin || ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass=""/></span>.</p>
+                <p><span className="font-bold">SÉPTIMA.- VIGENCIA Y TERMINACIÓN.</span> El presente Acuerdo entrará en vigor en la fecha de su firma y permanecerá vigente por un período de <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.duracion === 'string' ? contratoActual.form_data.duracion : ''} onChange={handleChange('duracion')} placeholder="un (1) año" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span> a partir del <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.fecha_inicio === 'string' ? contratoActual.form_data.fecha_inicio : ''} onChange={handleChange('fecha_inicio')} placeholder="[Día de Mes de Año]" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span> y hasta el <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.fecha_fin === 'string' ? contratoActual.form_data.fecha_fin : ''} onChange={handleChange('fecha_fin')} placeholder="[Día de Mes de Año]" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span>.</p>
             </div>
 
             <div>
@@ -149,7 +149,21 @@ export const BloqueClausulasConfidencialidad = () => {
             </div>
 
             <div>
-                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para la interpretación y cumplimiento de este Acuerdo, &quot;Las Partes&quot; se someten expresamente a las leyes aplicables de México y a la jurisdicción de los tribunales competentes en la ciudad de <span className="font-bold"><InlineInput value={formData.ciudad_jurisdiccion || ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass=""/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
+                <p><span className="font-bold">DÉCIMA PRIMERA.- JURISDICCIÓN Y LEY APLICABLE.</span> Para la interpretación y cumplimiento de este Acuerdo, &quot;Las Partes&quot; se someten expresamente a las leyes aplicables de México y a la jurisdicción de los tribunales competentes en la ciudad de <span className="font-bold"><InlineInput value={typeof contratoActual?.form_data?.ciudad_jurisdiccion === 'string' ? contratoActual.form_data.ciudad_jurisdiccion : ''} onChange={handleChange('ciudad_jurisdiccion')} placeholder="Santiago de Querétaro, Querétaro" widthClass="" disabled={contratoActual?.status === 'finalizado'}/></span>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
+            </div>
+            {(typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : '') && (
+                <div>
+                    <p><span className="font-bold">DÉCIMA SEGUNDA.- CLÁUSULAS ADICIONALES.</span></p>
+                    <ul className="list-disc ml-6">
+                        {(typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : '').split('\n').map((item: string, index: number) => (
+                            item.trim() && <li key={index}>{item.trim()}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            <div>
+                <p><span className="font-bold">Cláusulas Adicionales:</span></p>
+                <InlineTextArea value={typeof contratoActual?.form_data?.clausulas_adicionales === 'string' ? contratoActual.form_data.clausulas_adicionales : ''} onChange={handleTextAreaChange('clausulas_adicionales')} placeholder="Agregar cláusulas adicionales (una por línea)" rows={4}/>
             </div>
         </div>
     );
