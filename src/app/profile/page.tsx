@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuthStore } from "../store/Store";
 import { useContratoStore, ContratoCompleto } from "../store/useContratoStore";
 import { createPaymentLink, downloadContract, getContracts, getContractDetails, getAvailableContracts, changePassword } from "../lib/api";
@@ -8,7 +8,7 @@ import ProtectedRoute from "../components/ProtectedRoutes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { user, logout, url } = useAuthStore();
   const { setContratoActual } = useContratoStore();
   const [contracts, setContracts] = useState<ContratoCompleto[]>([]);
@@ -22,7 +22,6 @@ export default function ProfilePage() {
     confirmPassword: ''
   });
   const searchParams = useSearchParams();
-
   const [availableContracts, setAvailableContracts] = useState<number | null>(null);
   const router = useRouter();
 
@@ -31,7 +30,6 @@ export default function ProfilePage() {
       const paymentStatus = searchParams.get('payment_status');
       if (paymentStatus === 'success') {
           toast.success("¡Pago exitoso! Tu contrato se ha creado y aparecerá en la lista en breve.");
-          // Limpiamos la URL para no mostrar el mensaje de nuevo si el usuario recarga
           router.replace('/profile', { scroll: false });
       }
       else if (paymentStatus === 'cancelled') {
@@ -207,7 +205,6 @@ export default function ProfilePage() {
   
 
   return (
-    <ProtectedRoute>
       <main className="min-h-screen bg-background mt-12">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0 w-full">
@@ -578,6 +575,15 @@ export default function ProfilePage() {
           </div>
         </div>
       </main>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <ProtectedRoute>
+      <Suspense fallback={<div className="min-h-screen bg-background mt-12 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div></div>}>
+        <ProfileContent />
+      </Suspense>
     </ProtectedRoute>
   );
 }
