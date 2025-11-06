@@ -33,6 +33,7 @@ export default function RootLayout({
         <Toaster richColors position="top-right" />
         <Navbar />
         {children}
+        <Analytics/>
       </body>
     </html>
   );
