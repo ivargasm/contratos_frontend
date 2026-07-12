@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 export default function DocsPage() {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
-    'getting-started': true
+    'getting-started': true,
+    'esignature': false,
+    'b2b': false
   });
 
   const toggleSection = (section: string) => {
@@ -69,8 +71,10 @@ export default function DocsPage() {
             <a href="#contract-types" className="block text-primary hover:underline">3. Tipos de contratos</a>
             <a href="#pricing" className="block text-primary hover:underline">4. Precios y límites</a>
             <a href="#editing" className="block text-primary hover:underline">5. Edición de contratos</a>
-            <a href="#account" className="block text-primary hover:underline">6. Gestión de cuenta</a>
-            <a href="#faq" className="block text-primary hover:underline">7. Preguntas frecuentes</a>
+            <a href="#esignature" className="block text-primary hover:underline">6. Firma Electrónica</a>
+            <a href="#b2b" className="block text-primary hover:underline">7. Plataforma Empresarial (B2B)</a>
+            <a href="#account" className="block text-primary hover:underline">8. Gestión de cuenta</a>
+            <a href="#faq" className="block text-primary hover:underline">9. Preguntas frecuentes</a>
           </nav>
         </div>
 
@@ -324,14 +328,88 @@ export default function DocsPage() {
           )}
         </section>
 
-        {/* Sección 6: Gestión de cuenta */}
+        {/* Sección 6: Firma Electrónica */}
+        <section id="esignature" className="mb-12">
+          <div 
+            className="flex items-center cursor-pointer mb-4"
+            onClick={() => toggleSection('esignature')}
+          >
+            <span className="mr-2">{openSections['esignature'] ? '▼' : '▶'}</span>
+            <h2 className="text-xl md:text-2xl font-bold">6. Firma Electrónica</h2>
+          </div>
+          
+          {openSections['esignature'] && (
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">¿Cómo funciona la firma electrónica?</h3>
+              <p className="text-muted-foreground mb-4">
+                Una vez que finalizas tu contrato, puedes enviarlo para firma electrónica con validez legal. 
+                El proceso está diseñado para cumplir con la NOM-151 y otras regulaciones vigentes en materia de firmas electrónicas simples.
+              </p>
+              <ul className="list-disc ml-6 space-y-2 mb-6">
+                <li><strong>Invitación:</strong> Se envía un correo electrónico seguro a los firmantes.</li>
+                <li><strong>Firma en dispositivo:</strong> Los firmantes dibujan su firma o escriben su nombre en cualquier dispositivo.</li>
+                <li><strong>Hoja de Auditoría:</strong> Generamos una constancia criptográfica (Hash SHA-256) con las direcciones IP, estampas de tiempo y correos electrónicos de los firmantes.</li>
+                <li><strong>Seguridad:</strong> El documento final sellado se guarda en una bóveda segura (AWS S3) inalterable.</li>
+              </ul>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-2">💡 Nota Legal</h4>
+                <p className="text-blue-700 break-words">
+                  EasyContract actúa como plataforma tecnológica de captura. Es responsabilidad tuya como creador del contrato verificar la identidad de los firmantes a los que envías la invitación.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Sección 7: Plataforma Empresarial (B2B) */}
+        <section id="b2b" className="mb-12">
+          <div 
+            className="flex items-center cursor-pointer mb-4"
+            onClick={() => toggleSection('b2b')}
+          >
+            <span className="mr-2">{openSections['b2b'] ? '▼' : '▶'}</span>
+            <h2 className="text-xl md:text-2xl font-bold">7. Plataforma Empresarial (B2B)</h2>
+          </div>
+          
+          {openSections['b2b'] && (
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Manejo a Gran Escala</h3>
+              <p className="text-muted-foreground mb-4">
+                Si te registraste como cuenta de <strong>Empresa</strong>, accedes a un Dashboard avanzado diseñado para generar y gestionar decenas de contratos simultáneamente.
+              </p>
+              
+              <div className="grid gap-6 md:grid-cols-2 mb-6">
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-medium mb-3">📂 Plantillas Propias</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Sube tus propios contratos en formato DOCX utilizando etiquetas (tags). Nuestro motor leerá tu formato exacto para mantener la identidad corporativa de tu empresa.
+                  </p>
+                </div>
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-medium mb-3">📄 Generación Masiva (CSV/Excel)</h4>
+                  <p className="text-sm text-muted-foreground">
+                    No llenes un contrato a la vez. Descarga la plantilla de Excel, llena la información de 50, 100 o más personas y genera todos los contratos en un solo clic.
+                  </p>
+                </div>
+              </div>
+              
+              <h3 className="text-lg font-semibold mb-4">Flujo de Firmas Automatizado</h3>
+              <p className="text-muted-foreground">
+                Desde el panel empresarial, puedes enviar contratos masivamente para su firma electrónica y hacer un seguimiento individual de qué empleado, cliente o proveedor ya ha firmado y quién está pendiente.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Sección 8: Gestión de cuenta */}
         <section id="account" className="mb-12">
           <div 
             className="flex items-center cursor-pointer mb-4"
             onClick={() => toggleSection('account')}
           >
             <span className="mr-2">{openSections['account'] ? '▼' : '▶'}</span>
-            <h2 className="text-xl md:text-2xl font-bold">6. Gestión de cuenta</h2>
+            <h2 className="text-xl md:text-2xl font-bold">8. Gestión de cuenta</h2>
           </div>
           
           {openSections['account'] && (
@@ -371,14 +449,14 @@ export default function DocsPage() {
           )}
         </section>
 
-        {/* Sección 7: FAQ */}
+        {/* Sección 9: FAQ */}
         <section id="faq" className="mb-12">
           <div 
             className="flex items-center cursor-pointer mb-4"
             onClick={() => toggleSection('faq')}
           >
             <span className="mr-2">{openSections['faq'] ? '▼' : '▶'}</span>
-            <h2 className="text-xl md:text-2xl font-bold">7. Preguntas frecuentes</h2>
+            <h2 className="text-xl md:text-2xl font-bold">9. Preguntas frecuentes</h2>
           </div>
           
           {openSections['faq'] && (

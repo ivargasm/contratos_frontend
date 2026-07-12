@@ -12,6 +12,10 @@ export const useContractWizard = (contractType: string) => {
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
+    const [showSignatureMode, setShowSignatureMode] = useState(false);
+    const [signatureMode, setSignatureMode] = useState<'tradicional' | 'electronica'>('tradicional');
+    const [signers, setSigners] = useState<{ name: string, email: string, role: string }[]>([]);
+
     useEffect(() => {
         // Solo crear un nuevo contrato si no existe ninguno
         if (!contratoActual) {
@@ -34,7 +38,8 @@ export const useContractWizard = (contractType: string) => {
         try {
             let updatedContract;
             if (!contratoActual.id || contratoActual.id === 0) {
-                updatedContract = await generatePurchaseSaleContract(url, contratoActual.contract_type, contratoActual.form_data as Record<string, string>);
+                const response = await generatePurchaseSaleContract(url, contratoActual.contract_type, contratoActual.form_data as Record<string, string>);
+                updatedContract = { ...contratoActual, id: response.id };
                 toast.dismiss();
                 toast.success("Borrador creado y guardado.");
             } else {
@@ -70,25 +75,59 @@ export const useContractWizard = (contractType: string) => {
             toast.info("Por favor, guarda los cambios antes de finalizar el contrato.");
             return;
         }
+        setShowSignatureMode(true);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const handleSignatureModeSelected = (mode: 'tradicional' | 'electronica', selectedSigners?: { name: string, email: string, role: string }[], autoSignerId?: number | null) => {
+        setSignatureMode(mode);
+        if (selectedSigners) setSigners(selectedSigners);
+        setShowSignatureMode(false);
         setShowDisclaimer(true);
     };
 
     const handleConfirmFinalize = async () => {
         if (!contratoActual?.id) return;
-        
+
         setIsSaving(true);
         setShowDisclaimer(false);
         toast.loading("Finalizando contrato, por favor espera...");
 
         try {
-            await updateContract(url, contratoActual.id, contratoActual.contract_type, contratoActual.form_data as Record<string, string>);
+            // Update con el modo de firma y signers
+            const dataToUpdate = { ...contratoActual.form_data };
+            const payload: Record<string, unknown> = { contract_type: contratoActual.contract_type, form_data: dataToUpdate, signature_mode: signatureMode };
+            if (signatureMode === 'electronica' && signers) {
+                payload.signers = signers;
+            }
+
+            // Re-implementar updateContract para soportar el payload completo o usar fetch directo aquí?
+            // Mejor modificar updateContract en api.ts para que envíe todo.
+            // O podemos pasarlo a form_data y el backend lo lee... No, el schema espera contract_type, form_data, signature_mode, signers.
+
+            const response = await fetch(`${url}/contracts/${contratoActual.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || "Error al actualizar el contrato");
+            }
+
             const finalizedContract = await finalizeContract(url, contratoActual.id);
             toast.dismiss();
-            toast.success("Contrato finalizado con éxito. Obteniendo PDF...");
-            
-            const presignedUrl = await getPresignedUrl(url, finalizedContract.id);
-            if (presignedUrl) {
-                window.open(presignedUrl, '_blank');
+
+            if (signatureMode === 'electronica') {
+                toast.success("Contrato finalizado y enviado para firma.");
+            } else {
+                toast.success("Contrato finalizado con éxito. Obteniendo PDF...");
+                const presignedUrl = await getPresignedUrl(url, finalizedContract.id);
+                if (presignedUrl) {
+                    window.open(presignedUrl, '_blank');
+                }
             }
 
             clearStore();
@@ -105,10 +144,13 @@ export const useContractWizard = (contractType: string) => {
         contratoActual,
         showDisclaimer,
         setShowDisclaimer,
+        showSignatureMode,
+        setShowSignatureMode,
         isSaving,
         handleSaveChanges,
         handleDownloadDraft,
         handleFinalizeClick,
+        handleSignatureModeSelected,
         handleConfirmFinalize
     };
 };

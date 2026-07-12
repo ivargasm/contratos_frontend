@@ -13,12 +13,14 @@ import { toast } from "sonner"
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [message, setMessage] = useState("");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [error, setError] = useState("");
     const { url } = useAuthStore();
 
     const [isLoading, setIsLoading] = useState(false)
-    
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage("");
@@ -36,10 +38,13 @@ export default function ForgotPassword() {
             if (data) {
                 const result = await data.json();
                 setMessage(result.message);
-                toast.success("¡Operación exitosa!", { description: message })
+                toast.success("¡Operación exitosa!", { description: result.message })
+                setTimeout(() => {
+                    window.location.href = "/auth/login";
+                }, 2000);
             } else {
                 setError("Error al enviar la solicitud.");
-                toast.error("¡Algo salio mal", { description: error })
+                toast.error("¡Algo salió mal!", { description: "Error al enviar la solicitud." })
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -47,13 +52,15 @@ export default function ForgotPassword() {
             } else {
                 setError("Error al enviar la solicitud.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    
+
     return (
         <div className={`min-h-screen flex items-center justify-center p-4`}>
-        
+
             <div className="w-full max-w-md">
                 <Card className="w-full bg-white dark:bg-gray-800">
                     <CardHeader className="space-y-1">

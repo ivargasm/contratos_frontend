@@ -28,19 +28,53 @@ export const logout = async (url: string) => {
     return res;
 };
 
-export async function register(username: string, email: string, password: string, url: string) {
+export const refreshSessionAPI = async (url: string) => {
+    const res = await fetch(`${url}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Error al renovar sesión');
+    return res.json();
+};
+
+export async function register(username: string, email: string, password: string, url: string, accepted_terms: boolean, terms_version: string, company_name?: string) {
     try {
+        const body: Record<string, unknown> = { username, email, password, accepted_terms, terms_version };
+        if (company_name) {
+            body.company_name = company_name;
+        }
         const res = await fetch(`${url}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password }),
+            body: JSON.stringify(body),
         });
 
-        return res.json();
-    } catch (error) {
-        console.error("Error en el registro:", error);
-        return false;
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || "Error en el registro");
+        }
+
+        return await res.json();
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Error en el registro";
+        return { error: errorMessage };
     }
+}
+
+export async function acceptTermsAPI(url: string, accepted_terms: boolean, terms_version: string) {
+    const res = await fetch(`${url}/auth/accept-terms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ accepted_terms, terms_version }),
+    });
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.detail || "Error al aceptar los términos");
+    }
+
+    return await res.json();
 }
 
 export async function forgot_password(url: string, email: string) {
@@ -131,7 +165,7 @@ export async function getContracts(url: string): Promise<ContratoCompleto[]> {
 // Generar enlace de pago
 export const createPaymentLink = async (
     url: string,
-    operation_type: 'new' | 'duplicate' | 'new_version',
+    operation_type: 'new' | 'duplicate' | 'new_version' | 'upgrade_starter' | 'upgrade_business' | 'upgrade_enterprise',
     original_contract_id?: number
 ) => {
     const body: { operation_type: string; original_contract_id?: number } = {
@@ -240,7 +274,7 @@ export async function getContractDetails(url: string, contractId: number): Promi
     return await response.json();
 }
 
-export async function finalizeContract(url: string,contractId: number): Promise<ContratoCompleto> {
+export async function finalizeContract(url: string, contractId: number): Promise<ContratoCompleto> {
     const response = await fetch(`${url}/contracts/${contractId}/finalize`, {
         method: "POST", credentials: "include"
     });
@@ -248,7 +282,7 @@ export async function finalizeContract(url: string,contractId: number): Promise<
     return await response.json();
 }
 
-export async function createNewVersion(url: string,contractId: number): Promise<ContratoCompleto> {
+export async function createNewVersion(url: string, contractId: number): Promise<ContratoCompleto> {
     const response = await fetch(`${url}/contracts/${contractId}/new-version`, {
         method: "POST", credentials: "include"
     });
@@ -256,7 +290,7 @@ export async function createNewVersion(url: string,contractId: number): Promise<
     return await response.json();
 }
 
-export async function duplicateContract(url: string,contractId: number): Promise<ContratoCompleto> {
+export async function duplicateContract(url: string, contractId: number): Promise<ContratoCompleto> {
     const response = await fetch(`${url}/contracts/${contractId}/duplicate`, {
         method: "POST", credentials: "include"
     });
@@ -313,4 +347,32 @@ export async function downloadContract(url: string, contractId: number) {
     } else {
         throw new Error("Tipo de respuesta no soportado desde el servidor.");
     }
+}
+
+// --- FUNCIONES DE FIRMA PÚBLICA ---
+export async function getSignDocument(url: string, token: string) {
+    const res = await fetch(`${url}/sign/${token}`);
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Error loading document");
+    }
+    return await res.json();
+}
+
+export async function submitSignDocument(url: string, token: string, signatureData: string, userAgent: string) {
+    const res = await fetch(`${url}/sign/${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            signature_data: signatureData,
+            user_agent: userAgent
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Error al guardar firma");
+    }
+
+    return await res.json();
 }

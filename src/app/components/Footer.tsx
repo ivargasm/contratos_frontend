@@ -21,6 +21,14 @@ export function Footer() {
                 </div>
 
                 <div>
+                    <h3 className="text-lg font-semibold mb-3">Legales</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><a href="/terms" className="hover:underline">Términos y Condiciones</a></li>
+                        <li><a href="/privacy" className="hover:underline">Aviso de Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <div>
                     <h3 className="text-lg font-semibold mb-3">Contacto</h3>
                     <ul className="text-sm space-y-2 text-muted-foreground">
                         <li>Email: <a href="mailto:contacto@easycontract.com.mx" className="hover:underline">contacto@easycontract.com.mx</a></li>
@@ -32,7 +40,7 @@ export function Footer() {
             </div>
 
             <div className="border-t border-sidebar-border text-sm text-center text-muted-foreground py-4 px-6">
-                &copy; {new Date().getFullYear()} Tu App Legal. Todos los derechos reservados.
+                &copy; {new Date().getFullYear()} EasyContract. Todos los derechos reservados.
             </div>
         </footer>
     )

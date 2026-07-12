@@ -6,7 +6,6 @@ import { useAuthStore } from "../../store/Store";
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
@@ -19,12 +18,16 @@ export default function RegisterPage() {
         username: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        companyName: ""
     });
+    const [acceptTerms, setAcceptTerms] = useState(false);
+
+    const [accountType, setAccountType] = useState<"personal" | "empresa">("personal");
 
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword)
     }
@@ -41,8 +44,12 @@ export default function RegisterPage() {
     // }, [userValid]);
 
     useEffect(() => {
-        if ((userAuth || user)) {
-            router.push('/profile');
+        if (userAuth && user) {
+            if (user.company_id) {
+                router.push('/enterprise/dashboard');
+            } else {
+                router.push('/profile');
+            }
         }
     }, [user, userAuth, router]);
 
@@ -83,6 +90,14 @@ export default function RegisterPage() {
             newErrors.push("Las contraseñas no coinciden.");
         }
 
+        if (accountType === "empresa" && form.companyName.trim().length === 0) {
+            newErrors.push("El nombre de la empresa es obligatorio.");
+        }
+
+        if (!acceptTerms) {
+            newErrors.push("Debes aceptar los Términos y Condiciones y el Aviso de Privacidad.");
+        }
+
         setErrors(newErrors);
         return newErrors.length === 0;
     };
@@ -91,112 +106,174 @@ export default function RegisterPage() {
         e.preventDefault();
         if (!validateForm()) return;
 
-        const success = await registerUser(form.username, form.email, form.password);
-        if (success) {
+        const company_name = accountType === "empresa" ? form.companyName.trim() : undefined;
+        // Static version "1.0" for now
+        const result = await registerUser(form.username, form.email, form.password, acceptTerms, "1.0", company_name);
+        if (result.success) {
             router.push("/auth/login");
         } else {
-            setErrors(["Error al registrar. Inténtalo nuevamente."]);
+            setErrors([result.error || "Error al registrar. Inténtalo nuevamente."]);
         }
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-            <form onSubmit={handleSubmit}>
-                <Card className="w-full max-w-md shadow-lg bg-white dark:bg-gray-800">
+        <div className="min-h-screen flex w-full">
+
+            {/* Visual Section (Left) */}
+            <div className="hidden lg:flex lg:w-1/2 relative bg-[#1C212B] overflow-hidden items-center justify-center">
+                {/* Decoración de fondo */}
+                <div
+                    className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-80"
+                    style={{ backgroundImage: "url('/auth_bg.png')" }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C212B] via-[#1C212B]/40 to-transparent z-10" />
+
+                <div className="relative z-20 max-w-lg p-12 text-center">
+                    <h2 className="text-4xl font-bold text-white mb-6">Únete a la evolución legal</h2>
+                    <p className="text-lg text-gray-300">
+                        Crea, firma y gestiona tus contratos en la nube con la plataforma líder para profesionales.
+                    </p>
+                </div>
+            </div>
+
+            {/* Form Section (Right) */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-[#1C212B] overflow-y-auto">
+                <form onSubmit={handleSubmit} className="w-full max-w-lg animate-in fade-in slide-in-from-bottom-4 duration-700 py-8">
+                    <div className="mb-8 text-center lg:text-left">
+                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Crear cuenta</h1>
+                        <p className="text-gray-500 dark:text-gray-400 mt-2">
+                            Ingresa tus datos para registrarte
+                        </p>
+                    </div>
+
                     {errors.length > 0 && (
-                        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                        <div className="mb-6 p-4 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 text-sm rounded-xl border border-red-100 dark:border-red-900/30 space-y-1">
                             {errors.map((error, index) => (
-                                <p key={index}>• {error}</p>
+                                <p key={index} className="flex items-start">
+                                    <span className="mr-2 mt-0.5">•</span>
+                                    <span>{error}</span>
+                                </p>
                             ))}
                         </div>
                     )}
-                    <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">Crear cuenta</CardTitle>
-                        <CardDescription className="text-center text-gray-500 dark:text-gray-400">Ingresa tus datos para registrarte</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 dark:text-gray-300" htmlFor="username">Usuario</Label>
-                            <Input className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600" id="username" 
-                                placeholder="Ingresa tu nombre de usuario" 
-                                value={form.username}
-                                onChange={(e) => setForm({ ...form, username: e.target.value.trim() })}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 dark:text-gray-300" htmlFor="email">Correo electrónico</Label>
-                            <Input className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600" id="email" type="email" 
-                                placeholder="tu@ejemplo.com"
-                                value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 dark:text-gray-300" htmlFor="password">Contraseña</Label>
-                            <div className="relative">
-                                <Input className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600" id="password" 
-                                    type={showPassword ? "text" : "password"} 
-                                    placeholder="Ingresa tu contraseña" 
-                                    value={form.password}
-                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                    onClick={togglePasswordVisibility}
-                                >
-                                    {showPassword ? (
-                                        <EyeOffIcon className="h-4 w-4 text-gray-500" />
-                                    ) : (
-                                        <EyeIcon className="h-4 w-4 text-gray-500" />
-                                    )}
-                                    <span className="sr-only">{showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}</span>
-                                </Button>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="text-gray-700 dark:text-gray-300" htmlFor="confirmPassword">Repetir contraseña</Label>
-                            <div className="relative">
-                                <Input className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                                    id="confirmPassword"
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    placeholder="Confirma tu contraseña"
-                                    value={form.confirmPassword}
-                                    onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                    onClick={toggleConfirmPasswordVisibility}
-                                >
-                                    {showConfirmPassword ? (
-                                        <EyeOffIcon className="h-4 w-4 text-gray-500" />
-                                    ) : (
-                                        <EyeIcon className="h-4 w-4 text-gray-500" />
-                                    )}
-                                    <span className="sr-only">{showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}</span>
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col space-y-4">
-                        <Button className="w-full bg-gray-500 dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-primary/90 text-white">
-                            Registrarse
-                        </Button>
-                        <div className="text-center text-sm">
-                            ¿Ya tienes una cuenta?{" "}
-                            <Link href="/auth/login" className="text-slate-800 dark:text-slate-300 hover:underline font-medium">
-                                Iniciar sesión
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </Card>
 
-            </form>
+                    <div className="space-y-6">
+                        {/* Tipo de cuenta Segmented Control */}
+                        <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+                            <button
+                                type="button"
+                                onClick={() => setAccountType("personal")}
+                                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${accountType === "personal" ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" : "text-gray-500 hover:text-gray-900 dark:hover:text-white"}`}
+                            >
+                                Personal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setAccountType("empresa")}
+                                className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${accountType === "empresa" ? "bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white" : "text-gray-500 hover:text-gray-900 dark:hover:text-white"}`}
+                            >
+                                Empresa
+                            </button>
+                        </div>
+
+                        {accountType === "empresa" && (
+                            <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                                <Label className="text-gray-700 dark:text-gray-300 font-medium" htmlFor="companyName">Nombre de la Empresa</Label>
+                                <Input className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-[#C2A359] focus:border-transparent transition-all py-6 rounded-xl" id="companyName"
+                                    placeholder="Mi Empresa S.A. de C.V."
+                                    value={form.companyName}
+                                    onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+                                />
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                                <Label className="text-gray-700 dark:text-gray-300 font-medium" htmlFor="username">Usuario</Label>
+                                <Input className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-[#C2A359] focus:border-transparent transition-all py-6 rounded-xl" id="username"
+                                    placeholder="Tu usuario"
+                                    value={form.username}
+                                    onChange={(e) => setForm({ ...form, username: e.target.value.trim() })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-gray-700 dark:text-gray-300 font-medium" htmlFor="email">Correo electrónico</Label>
+                                <Input className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-[#C2A359] focus:border-transparent transition-all py-6 rounded-xl" id="email" type="email"
+                                    placeholder="tu@ejemplo.com"
+                                    value={form.email}
+                                    onChange={(e) => setForm({ ...form, email: e.target.value.trim() })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                                <Label className="text-gray-700 dark:text-gray-300 font-medium" htmlFor="password">Contraseña</Label>
+                                <div className="relative">
+                                    <Input className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-[#C2A359] focus:border-transparent transition-all py-6 rounded-xl pr-10" id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={form.password}
+                                        onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                                        onClick={togglePasswordVisibility}
+                                    >
+                                        {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-gray-700 dark:text-gray-300 font-medium" htmlFor="confirmPassword">Repetir contraseña</Label>
+                                <div className="relative">
+                                    <Input className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-[#C2A359] focus:border-transparent transition-all py-6 rounded-xl pr-10"
+                                        id="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={form.confirmPassword}
+                                        onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                                        onClick={toggleConfirmPasswordVisibility}
+                                    >
+                                        {showConfirmPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start space-x-3 mt-6 bg-gray-50 dark:bg-gray-800/30 p-4 rounded-xl">
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                checked={acceptTerms}
+                                onChange={(e) => setAcceptTerms(e.target.checked)}
+                                className="mt-1 w-4 h-4 text-[#C2A359] bg-white border-gray-300 rounded focus:ring-[#C2A359] dark:bg-gray-700 dark:border-gray-600 focus:ring-2 cursor-pointer transition-colors"
+                            />
+                            <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400 font-normal leading-relaxed cursor-pointer">
+                                He leído y acepto los <Link href="/terms" className="text-[#C2A359] hover:text-[#b0924e] font-medium hover:underline transition-colors" target="_blank">Términos y Condiciones</Link> y el <Link href="/privacy" className="text-[#C2A359] hover:text-[#b0924e] font-medium hover:underline transition-colors" target="_blank">Aviso de Privacidad</Link>.
+                            </Label>
+                        </div>
+
+                        <Button
+                            className="w-full mt-8 bg-[#C2A359] hover:bg-[#b0924e] text-white py-6 rounded-xl text-lg font-medium transition-all shadow-lg shadow-[#C2A359]/20 hover:shadow-[#C2A359]/40"
+                        >
+                            Crear cuenta
+                        </Button>
+                    </div>
+
+                    <p className="mt-8 text-center text-gray-600 dark:text-gray-400">
+                        ¿Ya tienes una cuenta?{" "}
+                        <Link href="/auth/login" className="font-semibold text-[#C2A359] hover:text-[#b0924e] transition-colors">
+                            Iniciar sesión
+                        </Link>
+                    </p>
+                </form>
+            </div>
         </div>
     );
 }

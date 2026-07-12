@@ -14,13 +14,14 @@ interface ContractWizardTemplateProps {
     buttonText?: string;
 }
 
+import { SignatureModeModal } from '@/app/components/ui/SignatureModeModal';
+import { useAuthStore } from '@/app/store/Store';
+
 export const ContractWizardTemplate: React.FC<ContractWizardTemplateProps> = ({
     contractType,
     title,
     children,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rolPropietario,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     rolInteresado,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     tipoContrato,
@@ -30,21 +31,27 @@ export const ContractWizardTemplate: React.FC<ContractWizardTemplateProps> = ({
         contratoActual,
         showDisclaimer,
         setShowDisclaimer,
+        showSignatureMode,
+        setShowSignatureMode,
         isSaving,
         handleSaveChanges,
         handleDownloadDraft,
         handleFinalizeClick,
+        handleSignatureModeSelected,
         handleConfirmFinalize
     } = useContractWizard(contractType);
     
     const { updateContratoFormData } = useContratoStore();
+    const { user } = useAuthStore();
+    // B2C users (without company) evaluate to true. Enterprise users depend on 'pro' plan.
+    const isProPlan = user?.company ? user.company.plan_type?.toLowerCase() === 'pro' : true;
 
     if (!contratoActual) {
         return <div className="text-center p-12">Cargando editor de contrato...</div>;
     }
 
     return (
-        <ProtectedRoute>
+        <ProtectedRoute requirePersonal={true}>
             <div className="bg-background min-h-screen p-4 sm:p-8 mt-12">
                 <div className="max-w-4xl mx-auto">
                     <header className="mb-8">
@@ -102,6 +109,14 @@ export const ContractWizardTemplate: React.FC<ContractWizardTemplateProps> = ({
                     </footer>
                 </div>
             </div>
+            
+            <SignatureModeModal
+                isOpen={showSignatureMode}
+                onClose={() => setShowSignatureMode(false)}
+                onContinue={handleSignatureModeSelected}
+                isProPlan={isProPlan}
+                contractRoles={[rolPropietario, rolInteresado]}
+            />
             
             <DisclaimerModal 
                 isOpen={showDisclaimer}

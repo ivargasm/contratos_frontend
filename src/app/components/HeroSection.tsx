@@ -13,8 +13,8 @@ export function HeroSection() {
                         <span >Procesos Legales</span>
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-md mx-auto md:mx-0 text-balance">
-                        Optimiza tus gestiones legales con nuestra aplicación avanzada de generación de contratos.
-                        Simplifica, agiliza y asegura tus procesos.
+                        Optimiza tus gestiones con nuestra plataforma inteligente.
+                        Crea contratos, envíalos para firma electrónica con validez legal y gestiona tu empresa.
                     </p>
                     <div>
                         <Link href="/contract-selector" passHref>

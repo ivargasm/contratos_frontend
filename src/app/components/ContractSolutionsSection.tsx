@@ -20,9 +20,32 @@ export const ContractSolutionsSection = () => {
                     <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-title-foreground">
                         Simplifica la Redacción Legal
                     </h2>
-                    <p className="text-muted text-lg max-w-md mx-auto md:mx-0 text-balance">
+                    <p className="text-muted text-lg max-w-md mx-auto md:mx-0 text-balance mb-6">
                         Optimiza tus documentos legales con nuestra aplicación especializada en generación de contratos, eficiente y adaptable a tus necesidades.
                     </p>
+                    <ul className="space-y-4 max-w-md mx-auto md:mx-0 text-left">
+                        <li className="flex items-start">
+                            <span className="text-primary mr-2 mt-1">✓</span>
+                            <div>
+                                <h3 className="font-semibold text-white">Generación Inteligente</h3>
+                                <p className="text-muted text-sm">Responde unas simples preguntas y obtén un contrato a tu medida.</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <span className="text-primary mr-2 mt-1">✓</span>
+                            <div>
+                                <h3 className="font-semibold text-white">Firma Electrónica Avanzada</h3>
+                                <p className="text-muted text-sm">Firma tus documentos en línea con total validez legal, registro de auditoría y cifrado seguro (NOM-151).</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <span className="text-primary mr-2 mt-1">✓</span>
+                            <div>
+                                <h3 className="font-semibold text-white">Soluciones para Empresas (B2B)</h3>
+                                <p className="text-muted text-sm">Sube tus propias plantillas, carga datos masivos vía CSV y automatiza el envío de contratos a múltiples firmantes.</p>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>

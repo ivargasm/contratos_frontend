@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const { userAuth, logout } = useAuthStore();
+    const { userAuth, user, logout } = useAuthStore();
+    const dashboardLink = user?.company_id ? "/enterprise/dashboard" : "/profile";
     const router = useRouter();
     const [darkMode, setDarkMode] = useState(false)
 
@@ -72,7 +73,7 @@ export default function Navbar() {
                     {userAuth && (
                         <>
                             <li>
-                                <Link href="/profile" className="flex items-center gap-2 hover:text-primary">
+                                <Link href={dashboardLink} className="flex items-center gap-2 hover:text-primary">
                                     <Folder size={20} /> Dashboard
                                 </Link>
                             </li>
@@ -122,7 +123,7 @@ export default function Navbar() {
                         {userAuth && (
                             <>
                                 <li>
-                                    <Link href="/profile" className="flex items-center gap-2 text-slate-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                    <Link href={dashboardLink} className="flex items-center gap-2 text-slate-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                         <Folder size={20} /> Dashboard
                                     </Link>
                                 </li>
