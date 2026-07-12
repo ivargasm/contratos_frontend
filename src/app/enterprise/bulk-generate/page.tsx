@@ -143,7 +143,7 @@ export default function BulkGenerate() {
     const handleUpgrade = async () => {
         try {
             setUpgrading(true);
-            const checkoutUrl = await createPaymentLink(url, "enterprise_upgrade");
+            const checkoutUrl = await createPaymentLink(url, "upgrade_enterprise");
             window.location.href = checkoutUrl;
         } catch (error) {
             console.error("Error al redirigir al pago", error);

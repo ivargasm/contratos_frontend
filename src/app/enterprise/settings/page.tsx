@@ -479,11 +479,11 @@ export default function EnterpriseSettings() {
                                     <h4 className="text-xl font-bold text-gray-900 dark:text-white">Starter</h4>
                                     <p className="text-gray-500 text-sm mt-1 mb-4">Para pequeñas empresas</p>
                                     <div className="mb-6">
-                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$1,299</span>
+                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$999</span>
                                         <span className="text-gray-500">/mes</span>
                                     </div>
                                     <ul className="space-y-3 mb-8 flex-1">
-                                        <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Límite de 5 plantillas</li>
+                                        <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Límite de 10 plantillas</li>
                                         <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> 50 contratos por mes</li>
                                         <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Firma electrónica avanzada</li>
                                         <li className="flex items-center text-sm text-gray-400 dark:text-gray-500 line-through"><span className="mr-2">✗</span> Generación masiva (CSV)</li>
@@ -505,11 +505,11 @@ export default function EnterpriseSettings() {
                                     <h4 className="text-xl font-bold text-gray-900 dark:text-white">Business</h4>
                                     <p className="text-gray-500 text-sm mt-1 mb-4">Para equipos en crecimiento</p>
                                     <div className="mb-6">
-                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$2,999</span>
+                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$2,599</span>
                                         <span className="text-gray-500">/mes</span>
                                     </div>
                                     <ul className="space-y-3 mb-8 flex-1">
-                                        <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Límite de 15 plantillas</li>
+                                        <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Límite de 30 plantillas</li>
                                         <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> 300 contratos por mes</li>
                                         <li className="flex items-center text-sm text-gray-600 dark:text-gray-300"><span className="text-green-500 mr-2">✓</span> Firma electrónica avanzada</li>
                                         <li className="flex items-center text-sm text-gray-900 dark:text-white font-semibold"><span className="text-green-500 mr-2">✓</span> Generación masiva (CSV)</li>
@@ -528,7 +528,7 @@ export default function EnterpriseSettings() {
                                     <h4 className="text-xl font-bold text-gray-900 dark:text-white">Enterprise</h4>
                                     <p className="text-gray-500 text-sm mt-1 mb-4">Sin límites</p>
                                     <div className="mb-6">
-                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$5,999</span>
+                                        <span className="text-3xl font-bold text-gray-900 dark:text-white">$5,499</span>
                                         <span className="text-gray-500">/mes</span>
                                     </div>
                                     <ul className="space-y-3 mb-8 flex-1">
